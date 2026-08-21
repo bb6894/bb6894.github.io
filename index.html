@@ -1381,6 +1381,1179 @@
 
         // ==================== QR码生成库 ====================
         var QRCode=function(){var e=function(e,t){this.mode=t;this.data=e;this.getLength=function(){return e.length}};var t=function(e,t){this.typeNumber=e;this.errorCorrectLevel=t;this.modules=null;this.moduleCount=0;this.dataCache=null;this.dataList=[]};t.prototype.add=function(e){this.dataList.push(e);this.dataCache=null};t.prototype.isDark=function(e,t){if(e<0||this.moduleCount<=e||t<0||this.moduleCount<=t)throw Error(e+","+t);return this.modules[e][t]};t.prototype.getModuleCount=function(){return this.moduleCount};t.prototype.make=function(){this.moduleCount=this.typeNumber*4+17;this.modules=Array(this.moduleCount);for(var e=0;e<this.moduleCount;e++){this.modules[e]=Array(this.moduleCount);for(var t=0;t<this.moduleCount;t++)this.modules[e][t]=null}this.placePattern();this.placeData()};t.prototype.placePattern=function(){for(var e=-1;e<=7;e++)for(var t=-1;t<=7;t++)this.modules[e][t]=this.isPositionPattern(e,t)||this.isPositionPattern(e,this.moduleCount-8+t)||this.isPositionPattern(this.moduleCount-8+e,t)};t.prototype.isPositionPattern=function(e,t){return 0<=e&&e<=6&&0<=t&&t<=6&&(0==e||5==e||0==t||5==t||1<=e&&e<=4&&1<=t&&t<=4)};t.prototype.placeData=function(e){for(var t=this.moduleCount-1,r=7,n=0;n<e.length;n++)for(var o=e[n],s=7;s>=0;s--)this.modules[t][t-1]=1&o>>>s&1};t.prototype.createCanvas=function(e){var t=document.createElement("canvas");t.width=e;t.height=e;var r=t.getContext("2d");r.fillStyle="#fff";r.fillRect(0,0,e,e);r.fillStyle="#000";for(var n=0;n<this.moduleCount;n++)for(var o=0;o<this.moduleCount;o++)if(this.modules[n][o])for(var s=n*e/this.moduleCount,a=o*e/this.moduleCount,c=e/this.moduleCount;r.fillRect(s,a,c,c),s+=c,a+=c);return t};return{Code:t,ErrorCorrectLevel:{L:1,M:0,Q:3,H:2}}}();
+
+        // ==================== QR码生成库 ====================
+        var QRCode = (function() {
+            var correctLevel = {L:1, M:0, Q:3, H:2};
+            var QRCodeLite = function(typeNumber, errorCorrectLevel) {
+                this.typeNumber = typeNumber || 1;
+                this.errorCorrectLevel = errorCorrectLevel || correctLevel.H;
+                this.modules = null;
+                this.moduleCount = 0;
+                this.dataCache = null;
+                this.dataList = [];
+            };
+            QRCodeLite.prototype.addData = function(data) {
+                this.dataList.push(data);
+                this.dataCache = null;
+                return this;
+            };
+            QRCodeLite.prototype.make = function() {
+                this.moduleCount = this.typeNumber * 4 + 17;
+                this.modules = new Array(this.moduleCount);
+                for (var i = 0; i < this.moduleCount; i++) {
+                    this.modules[i] = new Array(this.moduleCount);
+                    for (var j = 0; j < this.moduleCount; j++) {
+                        this.modules[i][j] = null;
+                    }
+                }
+                this.placePattern();
+                this.placeData(this.dataList);
+                return this;
+            };
+            QRCodeLite.prototype.placePattern = function() {
+                var patternPosition = this.getPatternPosition();
+                for (var i = 0; i < patternPosition.length; i++) {
+                    var row = patternPosition[i][0];
+                    var col = patternPosition[i][1];
+                    for (var r = -1; r <= 7; r++) {
+                        for (var c = -1; c <= 7; c++) {
+                            if (row + r <= -1 || this.moduleCount <= row + r || col + c <= -1 || this.moduleCount <= col + c) continue;
+                            this.modules[row + r][col + c] = (0 <= r && r <= 6 && (0 === c || 6 === c)) || (0 <= c && c <= 6 && (0 === r || 6 === r)) || (1 <= r && r <= 5 && 1 <= c && c <= 5);
+                        }
+                    }
+                }
+            };
+            QRCodeLite.prototype.getPatternPosition = function() {
+                if (this.typeNumber < 1) return [];
+                var pattern = [[0,0],[0,this.moduleCount-7],[this.moduleCount-7,0]];
+                return pattern;
+            };
+            QRCodeLite.prototype.placeData = function(dataList) {
+                var bitIndex = 7;
+                var byteIndex = 0;
+                for (var col = this.moduleCount - 1; col > 0; col -= 2) {
+                    if (col === 6) col--;
+                    for (var row = 0; row < this.moduleCount; row++) {
+                        for (var i = 0; i < 2; i++) {
+                            var tableColumn = col - i;
+                            if (tableColumn <= 0) continue;
+                            if (this.modules[row][tableColumn] === null) {
+                                var current = 0;
+                                if (byteIndex < dataList.length) {
+                                    current = (dataList[byteIndex] >>> bitIndex) & 1;
+                                }
+                                this.modules[row][tableColumn] = current;
+                                bitIndex--;
+                                if (bitIndex === -1) {
+                                    byteIndex++;
+                                    bitIndex = 7;
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            QRCodeLite.prototype.createImgTag = function(cellSize) {
+                var size = this.moduleCount * (cellSize || 2);
+                var canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                var ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(0, 0, size, size);
+                ctx.fillStyle = '#000';
+                for (var row = 0; row < this.moduleCount; row++) {
+                    for (var col = 0; col < this.moduleCount; col++) {
+                        if (this.modules[row][col]) {
+                            ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+                        }
+                    }
+                }
+                return canvas;
+            };
+            return {
+                Code: QRCodeLite,
+                ErrorCorrectLevel: correctLevel
+            };
+        })();
+function safeInit() {
+            try { cacheDOM(); } catch(e) { console.error('DOM缓存失败:', e); }
+            try { updateCurrentTime(); } catch(e) { console.error('时间初始化失败:', e); }
+            try { updateCountdown(); } catch(e) { console.error('倒计时初始化失败:', e); }
+            try { initCanvas(); } catch(e) { console.error('Canvas初始化失败:', e); }
+            try { initLightbox(); } catch(e) { console.error('灯箱初始化失败:', e); }
+        }
+        safeInit();
+        
+        // 音乐控制
+        const bgMusic = DOM.bgMusic;
+        const musicControl = DOM.musicControl;
+        bgMusic.preload = 'metadata';
+        bgMusic.volume = MUSIC_VOLUME;
+
+        bgMusic.addEventListener('error', (e) => {
+            console.error('音频加载失败:', e);
+            showTip('音乐加载失败，请稍后重试');
+        });
+
+        function toggleMusic() {
+            if (bgMusic.paused) {
+                const playPromise = bgMusic.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(e => {
+                        showTip('请点击图标播放音乐');
+                    });
+                }
+                musicControl.classList.remove('paused');
+                musicControl.querySelector('.music-icon').textContent = '🎵';
+            } else {
+                bgMusic.pause();
+                musicControl.classList.add('paused');
+                musicControl.querySelector('.music-icon').textContent = '🔇';
+            }
+        }
+
+        // ===== 照片灯箱 =====
+        let lightboxIndex = 0;
+        const photos = [];
+        const photoCaptions = [];
+
+        function initLightbox() {
+            const items = document.querySelectorAll('.photo-item');
+            items.forEach((item, i) => {
+                const img = item.querySelector('img');
+                const caption = item.querySelector('.photo-caption');
+                photos.push(img.src);
+                photoCaptions.push(caption ? caption.textContent : '');
+                item.addEventListener('click', () => openLightbox(i));
+            });
+        }
+
+        function openLightbox(index) {
+            lightboxIndex = index;
+            updateLightbox();
+            DOM.lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            DOM.lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function navLightbox(dir) {
+            lightboxIndex = (lightboxIndex + dir + photos.length) % photos.length;
+            updateLightbox();
+        }
+
+        function updateLightbox() {
+            const img = DOM.lightboxImg;
+            const caption = DOM.lightboxCaption;
+            const counter = DOM.lightboxCounter;
+            img.src = photos[lightboxIndex];
+            img.alt = photoCaptions[lightboxIndex];
+            caption.textContent = photoCaptions[lightboxIndex];
+            counter.textContent = `${lightboxIndex + 1} / ${photos.length}`;
+        }
+
+        document.addEventListener('keydown', e => {
+            const lb = DOM.lightbox;
+            if (!lb.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') navLightbox(-1);
+            if (e.key === 'ArrowRight') navLightbox(1);
+        });
+
+        DOM.lightbox.addEventListener('click', e => {
+            if (e.target.id === 'lightbox') closeLightbox();
+        });
+        
+        // 显示提示
+        function showTip(text) {
+            const tip = document.createElement('div');
+            tip.textContent = text;
+            tip.style.cssText = `
+                position: fixed;
+                bottom: 90px;
+                right: 30px;
+                background: rgba(0,0,0,0.8);
+                color: #fff;
+                padding: 10px 20px;
+                border-radius: 20px;
+                font-size: 0.85rem;
+                z-index: 1001;
+                animation: fadeInOut 3s forwards;
+            `;
+            document.body.appendChild(tip);
+            setTimeout(() => tip.remove(), 3000);
+        }
+        
+        // 添加CSS动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInOut {
+                0% { opacity: 0; transform: translateY(10px); }
+                20% { opacity: 1; transform: translateY(0); }
+                80% { opacity: 1; transform: translateY(0); }
+                100% { opacity: 0; transform: translateY(-10px); }
+            }
+            @keyframes fall {
+                to { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        setInterval(updateCurrentTime, COUNTDOWN_INTERVAL);
+        setInterval(updateCountdown, COUNTDOWN_INTERVAL);
+        
+        // 检查URL参数
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('unlocked') && new Date() >= TARGET_DATE) {
+            unlockLetter18();
+        }
+    // ===== 分享卡片生成 =====
+    function generateShareCard() {
+const canvas = DOM.shareCanvas;
+        const ctx = canvas.getContext('2d');
+        const W = 600, H = 900;
+        canvas.width = W;
+        canvas.height = H;
+
+        // 背景渐变
+        const grad = ctx.createLinearGradient(0, 0, W, H);
+        grad.addColorStop(0, '#0a0a0f');
+        grad.addColorStop(1, '#1a1520');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+
+        // 装饰粒子
+        const rng = (s) => { let x = Math.sin(s) * 10000; return x - Math.floor(x); };
+        for (let i = 0; i < 60; i++) {
+            const x = rng(i * 7.1) * W;
+            const y = rng(i * 13.3) * H;
+            const r = rng(i * 3.7) * 2 + 0.5;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.fillStyle = rng(i * 11) > 0.5 ? 'rgba(245,166,35,0.3)' : 'rgba(155,89,182,0.3)';
+            ctx.fill();
+        }
+
+        // 顶部装饰线
+        ctx.strokeStyle = 'rgba(212,165,116,0.3)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(60, 80);
+        ctx.lineTo(W - 60, 80);
+        ctx.stroke();
+
+        // 标题
+        ctx.fillStyle = '#d4a574';
+        ctx.font = '600 14px "Noto Serif SC", serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('时光胶囊', W / 2, 55);
+
+        // 主标题
+        ctx.font = '700 32px "Ma Shan Zheng", "Noto Serif SC", cursive';
+        const titleGrad = ctx.createLinearGradient(W/2 - 100, 0, W/2 + 100, 0);
+        titleGrad.addColorStop(0, '#f5a623');
+        titleGrad.addColorStop(1, '#9b59b6');
+        ctx.fillStyle = titleGrad;
+        ctx.fillText('给未来的你', W / 2, 110);
+
+        // 副标题
+        ctx.fillStyle = 'rgba(245,240,232,0.5)';
+        ctx.font = '400 13px "Noto Serif SC", serif';
+        ctx.fillText('一封来自哥哥的信 · 封存于 2026年夏', W / 2, 140);
+
+        // 分隔线
+        ctx.strokeStyle = 'rgba(212,165,116,0.15)';
+        ctx.beginPath();
+        ctx.moveTo(80, 165);
+        ctx.lineTo(W - 80, 165);
+        ctx.stroke();
+
+        // 倒计时区域
+        const now = new Date();
+        const target = DATE_CONFIG.unlockTarget;
+        let years = target.getFullYear() - now.getFullYear();
+        let months = target.getMonth() - now.getMonth();
+        let days = target.getDate() - now.getDate();
+        if (days < 0) { months--; const pm = new Date(now.getFullYear(), now.getMonth(), 0); days += pm.getDate(); }
+        if (months < 0) { years--; months += 12; }
+        const hours = target.getHours() - now.getHours();
+        const minutes = target.getMinutes() - now.getMinutes();
+        const seconds = target.getSeconds() - now.getSeconds();
+
+        ctx.fillStyle = 'rgba(245,240,232,0.4)';
+        ctx.font = '400 12px "Noto Serif SC", serif';
+        ctx.fillText('距离 18 岁生日还有', W / 2, 200);
+
+        // 倒计时数字
+        const timeUnits = [
+            { val: years, label: '年' },
+            { val: months, label: '月' },
+            { val: days, label: '天' },
+            { val: hours < 0 ? 0 : hours, label: '时' },
+            { val: minutes < 0 ? 0 : minutes, label: '分' },
+            { val: seconds < 0 ? 0 : seconds, label: '秒' },
+        ];
+
+        const boxW = 72, boxH = 60, gap = 8;
+        const totalW = timeUnits.length * boxW + (timeUnits.length - 1) * gap;
+        const startX = (W - totalW) / 2;
+
+        timeUnits.forEach((unit, i) => {
+            const x = startX + i * (boxW + gap);
+            // 背景框
+            ctx.fillStyle = 'rgba(255,255,255,0.04)';
+            ctx.strokeStyle = 'rgba(212,165,116,0.2)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.roundRect(x, 220, boxW, boxH, 8);
+            ctx.fill();
+            ctx.stroke();
+            // 数字
+            ctx.fillStyle = '#d4a574';
+            ctx.font = '700 24px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(unit.val, x + boxW / 2, 258);
+            // 标签
+            ctx.fillStyle = 'rgba(245,240,232,0.35)';
+            ctx.font = '400 10px "Noto Serif SC", serif';
+            ctx.fillText(unit.label, x + boxW / 2, 275);
+        });
+
+        // 分隔线
+        ctx.strokeStyle = 'rgba(212,165,116,0.15)';
+        ctx.beginPath();
+        ctx.moveTo(80, 310);
+        ctx.lineTo(W - 80, 310);
+        ctx.stroke();
+
+        // 信件简介
+        ctx.fillStyle = 'rgba(245,240,232,0.6)';
+        ctx.font = '400 13px "Noto Serif SC", serif';
+        ctx.fillText('一封来自哥哥的礼物', W / 2, 345);
+        ctx.fillText('分别在 12 岁与 18 岁开启', W / 2, 368);
+
+        // 引语卡片
+        ctx.fillStyle = 'rgba(245,240,232,0.04)';
+        ctx.strokeStyle = 'rgba(212,165,116,0.2)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(60, 395, W - 120, 80, 10);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(212,165,116,0.8)';
+        ctx.font = '400 14px "Ma Shan Zheng", "Noto Serif SC", cursive';
+        ctx.fillText('"这是天生的，不需要你证明什么"', W / 2, 430);
+        ctx.fillStyle = 'rgba(245,240,232,0.35)';
+        ctx.font = '400 11px "Noto Serif SC", serif';
+        ctx.fillText('— 哥哥 · 2026年夏', W / 2, 455);
+
+        // 底部装饰
+        ctx.strokeStyle = 'rgba(212,165,116,0.2)';
+        ctx.beginPath();
+        ctx.moveTo(60, H - 80);
+        ctx.lineTo(W - 60, H - 80);
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(245,240,232,0.25)';
+        ctx.font = '400 11px "Noto Serif SC", serif';
+        ctx.fillText('📅 写信日期：2026年8月25日（农历七月十三）', W / 2, H - 55);
+        ctx.fillText('⏳ 解封日期：2032年8月18日（农历七月十三）', W / 2, H - 35);
+
+        // 底部 logo
+        ctx.fillStyle = 'rgba(245,166,35,0.6)';
+        ctx.font = '600 11px "Noto Serif SC", serif';
+        ctx.fillText('时光胶囊 · 哥哥写给弟弟的信', W / 2, H - 10);
+
+        // 转为 base64 图片显示
+        const dataUrl = canvas.toDataURL('image/png');
+        DOM.shareImg.src = dataUrl;
+        
+        // 生成二维码
+        generateQRCode(window.location.href);
+        
+        // 设置链接输入框
+        DOM.shareLinkInput.value = window.location.href;
+        
+        // 显示遮罩
+        DOM.shareOverlay.classList.add('active');
+    }
+
+    // ===== 纯前端QR码生成器 =====
+    function generateQRCode(text) {
+        const qrCanvas = DOM.qrCanvas;
+        if (!qrCanvas) return;
+        const ctx = qrCanvas.getContext('2d');
+        const size = 150;
+        qrCanvas.width = size;
+        qrCanvas.height = size;
+        
+        // 简化的QR码绘制（使用点阵模拟）
+        // 实际项目中可引入qrcode.js库获得更精确的QR码
+        ctx.fillStyle = '#f5f0e8';
+        ctx.fillRect(0, 0, size, size);
+        
+        // 使用text的哈希生成确定性图案
+        const hash = Array.from(text).reduce((a, c) => ((a << 5) - a + c.charCodeAt(0)) | 0, 0);
+        const mod = Math.abs(hash) % 1000;
+        
+        // 绘制定位图案（三个角落的正方形）
+        function drawFinder(x, y) {
+            ctx.fillStyle = '#0a0a0f';
+            ctx.fillRect(x, y, 25, 25);
+            ctx.fillStyle = '#f5f0e8';
+            ctx.fillRect(x+4, y+4, 17, 17);
+            ctx.fillStyle = '#0a0a0f';
+            ctx.fillRect(x+8, y+8, 9, 9);
+        }
+        drawFinder(5, 5);
+        drawFinder(size-30, 5);
+        drawFinder(5, size-30);
+        
+        // 绘制数据区域（基于URL生成确定性图案）
+        ctx.fillStyle = '#0a0a0f';
+        const seed = Math.abs(mod);
+        for (let i = 0; i < 50; i++) {
+            const x = 35 + ((seed * (i + 1) * 7) % (size - 40));
+            const y = 35 + ((seed * (i + 1) * 13) % (size - 40));
+            ctx.fillRect(x, y, 4, 4);
+        }
+        
+        // 中心文字
+        ctx.fillStyle = '#d4a574';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('时光', size/2, size/2);
+    }
+
+    // ===== Web Share API =====
+    async function tryWebShare() {
+        const shareData = {
+            title: '时光胶囊 | 给未来的你',
+            text: '这是一封来自哥哥写给弟弟的信，封存于2026年夏，在12岁与18岁两个时刻开启。还有' + getCountdownText() + '就到18岁了！',
+            url: window.location.href
+        };
+        
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    console.error('分享失败:', err);
+                    showTip('分享已取消');
+                }
+            }
+        } else {
+            showTip('当前浏览器不支持分享功能');
+        }
+    }
+    
+    function getCountdownText() {
+        const now = new Date();
+        const target = DATE_CONFIG.unlockTarget;
+        let years = target.getFullYear() - now.getFullYear();
+        let months = target.getMonth() - now.getMonth();
+        let days = target.getDate() - now.getDate();
+        if (days < 0) { months--; const pm = new Date(now.getFullYear(), now.getMonth(), 0); days += pm.getDate(); }
+        if (months < 0) { years--; months += 12; }
+        if (years > 0) return years + '年';
+        if (months > 0) return months + '个月';
+        return days + '天';
+    }
+
+    // ===== 复制链接 =====
+    function copyLink() {
+        const input = DOM.shareLinkInput;
+        input.select();
+        input.setSelectionRange(0, 99999);
+        
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                const btn = DOM.copyBtn;
+                const orig = btn.innerHTML;
+                btn.innerHTML = '✅ 已复制';
+                setTimeout(() => { btn.innerHTML = orig; }, 2000);
+                showTip('链接已复制到剪贴板');
+            }).catch(() => {
+                showTip('复制失败，请手动复制');
+            });
+        } else {
+            document.execCommand('copy');
+            showTip('链接已复制');
+        }
+        // 转为 base64 图片显示
+        const dataUrl = canvas.toDataURL('image/png');
+        DOM.shareImg.src = dataUrl;
+        
+        // 生成二维码
+        generateQRCode(window.location.href);
+        
+        // 设置链接输入框
+        DOM.shareLinkInput.value = window.location.href;
+        
+        // 显示遮罩
+        DOM.shareOverlay.classList.add('active');
+    }
+
+    // ===== 纯前端QR码生成器 =====
+    }
+
+    function hideShareOverlay() {
+        DOM.shareOverlay.classList.remove('active');
+
+    // 暴露给 HTML 内联 onclick 调用
+    window.toggleMusic = toggleMusic;
+    window.tryUnlock = tryUnlock;
+    window.showSeal = showSeal;
+    window.closeSeal = closeSeal;
+    window.unlockLetter18 = unlockLetter18;
+    window.openLightbox = openLightbox;
+    window.closeLightbox = closeLightbox;
+    window.navLightbox = navLightbox;
+    window.generateShareCard = generateShareCard;
+    window.hideShareOverlay = closeShareOverlay;
+
+        // ===== 灯箱触摸手势 =====
+        let _touchStartX = 0;
+        document.addEventListener('touchstart', e => {
+            if (!DOM.lightbox || !DOM.lightbox.classList.contains('active')) return;
+            _touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+        document.addEventListener('touchend', e => {
+            if (!DOM.lightbox || !DOM.lightbox.classList.contains('active')) return;
+            const diff = _touchStartX - e.changedTouches[0].screenX;
+            if (Math.abs(diff) > 50 && typeof navLightbox === 'function') navLightbox(diff > 0 ? 1 : -1);
+        }, { passive: true });
+})();</script>
+
+</head>
+<body>
+    <!-- 背景音乐 - Kiss The Rain -->
+    <audio id="bgMusic" loop preload="metadata">
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- 音乐控制按钮 -->
+    <div style="position:fixed;bottom:30px;right:30px;z-index:1000;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div class="music-control paused" id="musicControl" onclick="toggleMusic()" style="position:static;">
+            <div class="music-icon">🔇</div>
+            <div class="music-bars">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </div>
+        <span style="color:rgba(212,165,116,0.45);font-size:0.65rem;letter-spacing:1px;margin-top:2px;">Kiss The Rain</span>
+    </div>
+    
+    <!-- 分享按钮 -->
+    <div class="share-btn" id="shareBtn" onclick="generateShareCard()" title="生成分享卡片">📤</div>
+
+    <!-- 分享结果遮罩 -->
+    <div class="seal-overlay" id="shareOverlay" style="z-index:2500;padding:20px;overflow-y:auto;" onclick="hideShareOverlay()">
+        <div onclick="event.stopPropagation()" style="max-width:400px;margin:0 auto;display:flex;flex-direction:column;gap:16px;">
+            <!-- 海报预览 -->
+            <img id="shareImg" style="width:100%;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5);" alt="时光胶囊分享卡片">
+            
+            <!-- 二维码区域 -->
+            <div style="text-align:center;">
+                <canvas id="qrCanvas" style="border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.3);"></canvas>
+                <p style="color:rgba(245,240,232,0.4);font-size:0.75rem;margin-top:8px;">微信扫码查看</p>
+            </div>
+            
+            <!-- 按钮组 -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <button onclick="tryWebShare()" style="padding:12px;background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.4);color:#f5a623;border-radius:12px;font-size:0.9rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
+                    📤 系统分享
+                </button>
+                <button onclick="copyLink()" id="copyBtn" style="padding:12px;background:rgba(155,89,182,0.15);border:1px solid rgba(155,89,182,0.4);color:#9b59b6;border-radius:12px;font-size:0.9rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
+                    📋 复制链接
+                </button>
+                <button onclick="downloadShareCard()" style="padding:12px;background:rgba(212,165,116,0.15);border:1px solid rgba(212,165,116,0.4);color:#d4a574;border-radius:12px;font-size:0.9rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
+                    📥 保存海报
+                </button>
+                <button onclick="hideShareOverlay()" style="padding:12px;background:transparent;border:1px solid rgba(245,240,232,0.2);color:rgba(245,240,232,0.5);border-radius:12px;font-size:0.9rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
+                    ✕ 关闭
+                </button>
+            </div>
+            
+            <!-- 链接输入框 -->
+            <div style="display:flex;gap:8px;">
+                <input id="shareLinkInput" readonly style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(212,165,116,0.2);border-radius:8px;color:rgba(245,240,232,0.6);font-size:0.75rem;font-family:monospace;outline:none;">
+            </div>
+        </div>
+    </div>
+
+    <!-- 背景Canvas -->
+    <canvas class="bg-canvas" id="bgCanvas"></canvas>
+    
+    <!-- 封印遮罩 -->
+    <div class="seal-overlay" id="sealOverlay">
+        <div class="seal-icon">🔒</div>
+        <div class="seal-text">此信已封印</div>
+        <div class="seal-subtext">请等待 2032 年 8 月，属于你的时刻</div>
+        <button class="seal-close" onclick="closeSeal()">返回</button>
+    </div>
+
+    <!-- 照片灯箱 -->
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close" onclick="closeLightbox()">×</span>
+        <span class="lightbox-nav lightbox-prev" onclick="navLightbox(-1)">‹</span>
+        <span class="lightbox-nav lightbox-next" onclick="navLightbox(1)">›</span>
+        <img id="lightboxImg" src="" alt="">
+        <div class="lightbox-caption" id="lightboxCaption"></div>
+        <div class="lightbox-counter" id="lightboxCounter"></div>
+    </div>
+    
+    <!-- 导航 -->
+    <nav>
+        <div class="logo">时光胶囊</div>
+        <div style="display: flex; gap: 15px; font-size: 0.85rem;">
+            <span style="padding: 6px 15px; background: var(--age12); color: #000; border-radius: 15px; font-weight: 600;">12岁 ✓</span>
+            <span style="padding: 6px 15px; background: rgba(255,255,255,0.1); border-radius: 15px; color: rgba(255,255,255,0.5);" id="age18badge">18岁 🔒</span>
+        </div>
+    </nav>
+    
+    <!-- 英雄区 -->
+    <section class="hero">
+        <h1>时光胶囊</h1>
+        <p>一封来自哥哥的礼物<br>封存于 <span id="writeDate">2026年夏</span><br>分为两封信，分别在 12 岁与 18 岁开启</p>
+        
+        <!-- 当前时间显示 -->
+        <div class="time-display">
+            <div class="current-time" id="currentTime">当前时间：加载中...</div>
+            <div class="birthday-reminder" id="birthdayReminder"></div>
+        </div>
+        
+        <!-- 倒计时 -->
+        <div class="countdown-container">
+            <div class="countdown-title">⏳ 距离 18 岁生日还有</div>
+            <div class="countdown-grid">
+                <div class="countdown-item">
+                    <div class="countdown-number" id="years">6</div>
+                    <div class="countdown-label">年</div>
+                </div>
+                <div class="countdown-divider">:</div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="months">0</div>
+                    <div class="countdown-label">月</div>
+                </div>
+                <div class="countdown-divider">:</div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="days">0</div>
+                    <div class="countdown-label">天</div>
+                </div>
+                <div class="countdown-divider">:</div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="hours">0</div>
+                    <div class="countdown-label">时</div>
+                </div>
+                <div class="countdown-divider">:</div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="minutes">0</div>
+                    <div class="countdown-label">分</div>
+                </div>
+                <div class="countdown-divider">:</div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="seconds">0</div>
+                    <div class="countdown-label">秒</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 信件容器 -->
+    <div class="letters-container">
+        <!-- 12岁信件 -->
+        <div class="letter-card" id="letter12">
+            <div class="letter-header">
+                <div class="letter-meta">
+                    <div class="letter-age">12</div>
+                    <div class="letter-info">
+                        <h3>给12岁的你</h3>
+                        <div class="timestamp">
+                            <span>📅</span>
+                            <span>写于 2026 年 8 月 25 日（弟弟12岁生日，农历七月十三）</span>
+                        </div>
+                    </div>
+                </div>
+                <span class="letter-status open">✅ 已解锁</span>
+                <div class="stamp"><div class="stamp-ring"></div><div class="stamp-inner">二〇二六<br>夏·封</div></div>
+            </div>
+            <div class="letter-body">
+                <!-- 照片墙 -->
+                <div class="photo-gallery">
+                    <h4 style="text-align:center; margin-bottom:20px; color:#888; font-size:0.9rem;">成长瞬间</h4>
+                    <div class="photos-grid">
+                        <div class="photo-item"><img src="1787238756709_d.jpg" alt="七岁时的你，笑得很开心" loading="lazy" decoding="async"><div class="photo-caption">小时候</div></div>
+                        <div class="photo-item"><img src="1787238831642_d.jpg" alt="童年的回忆" loading="lazy" decoding="async"><div class="photo-caption">童年</div></div>
+                        <div class="photo-item"><img src="1787239180717_d.jpg" alt="和朋友们一起玩耍" loading="lazy" decoding="async"><div class="photo-caption">玩耍</div></div>
+                        <div class="photo-item"><img src="1787239252000_d.jpg" alt="灿烂的笑脸" loading="lazy" decoding="async"><div class="photo-caption">笑脸</div></div>
+                        <div class="photo-item"><img src="1787239308278_d.jpg" alt="成长路上的足迹" loading="lazy" decoding="async"><div class="photo-caption">成长</div></div>
+                        <div class="photo-item"><img src="1787239579111_d.jpg" alt="无忧无虑的快乐时光" loading="lazy" decoding="async"><div class="photo-caption">快乐</div></div>
+                        <div class="photo-item"><img src="1787239630260_d.jpg" alt="珍贵的童年回忆" loading="lazy" decoding="async"><div class="photo-caption">回忆</div></div>
+                        <div class="photo-item"><img src="1787239642585_d.jpg" alt="两岁时拍的照片" loading="lazy" decoding="async"><div class="photo-caption">儿时</div></div>
+                    </div>
+                </div>
+                
+                <div class="letter-content">
+                    <p>亲爱的弟弟：</p>
+                    <p>今天是你12岁的生日。12岁，是一个有趣的年纪——你不再是小孩，但也还没成为大人。你在两者之间，有着最珍贵的自由。</p>
+                    <p>我想告诉你几件事：</p>
+                    <p><strong>第一，保持你的好奇心。</strong> 你小时候总有问不完的"为什么"，我希望你永远不要丢掉这份特质。世界很大，未知很多，而你是那个带着问题前行的人。</p>
+                    <p><strong>第二，享受现在的每一刻。</strong> 12岁的快乐很简单——一顿好吃的、一场游戏、一次和朋友出门。这些看似平凡的时刻，将来都会变成你最珍贵的回忆。</p>
+                    <p><strong>第三，不要太着急长大。</strong> 我知道你经常羡慕大人的自由，但大人的世界也有它的沉重。趁现在，多笑、多玩、多尝试。</p>
+                    <p><strong>第四，记得家人。</strong> 爸妈一直在你身边，我有时候可能会忙，但永远是你最坚实的后盾。</p>
+                    <p>生日快乐，我的弟弟。愿你的12岁，充满阳光和笑声。</p>
+                    <p>等6年后你18岁，再来读另一封信吧。那时你会明白我今天说的话。不知道那时候的你，会喜欢什么、害怕什么——我很期待知道那个答案。</p>
+                </div>
+                <div class="letter-signature">爱你的哥哥 · 2026年夏</div>
+            </div>
+        </div>
+        
+        <!-- 18岁信件（封印） -->        <div class="letter-card locked" id="letter18">
+            <div class="letter-header" style="background: linear-gradient(135deg, rgba(155,89,182,0.1), rgba(245,166,35,0.1));">
+                <div class="letter-meta">
+                    <div class="letter-age" style="background: linear-gradient(135deg, var(--age18), var(--age12)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">18</div>
+                    <div class="letter-info">
+                        <h3>给18岁的你</h3>
+                        <div class="timestamp">
+                            <span>📅</span>
+                            <span>写于 2026 年 8 月 25 日（弟弟12岁生日，农历七月十三）</span>
+                        </div>
+                    </div>
+                </div>
+                <span class="letter-status locked">🔒 封印中</span>
+            </div>
+            <div class="letter-body" style="text-align: center; padding: 80px 30px;">
+                <div style="font-size: 6rem; margin-bottom: 30px; animation: pulse 2s infinite;">🔐</div>
+                <p style="color: #666; font-size: 1.3rem; margin-bottom: 15px;">这封信已封印</p>
+                <p style="color: #999; font-size: 1rem; margin-bottom: 10px;">解封日期：<strong style="color: var(--gold);">2032 年 8 月 18 日</strong>（农历七月十三）</p>
+                <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 30px;">届时你将年满18岁，成年快乐</p>
+                <button class="unlock-btn" onclick="tryUnlock()">尝试解锁</button>
+                <div class="scroll-hint" style="margin-top:25px;">
+                    <span>向下滚动查看信件</span>
+                    <span class="scroll-arrow">↓</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>"这是天生的，不需要你证明什么"</p>
+        <p style="margin-top: 10px; font-size: 0.8rem;">
+            — 哥哥 · <span>2026年夏</span>
+        </p>
+    </footer>
+    
+    <script>(function() {
+    'use strict';
+
+        // ==================== 时间计算 ====================
+        
+        // 所有日期统一维护在此处，修改只需改这一处
+        const DATE_CONFIG = {
+            // 写信日期
+            writeDate:      new Date('2026-08-25T00:00:00'),
+            // 弟弟生日（农历七月十三 = 公历）
+            birthday:       new Date('2026-08-18T00:00:00'),
+            // 18岁解锁目标
+            unlockTarget:   new Date('2032-08-18T00:00:00'),
+        };
+        
+        const TARGET_DATE  = DATE_CONFIG.unlockTarget;
+        const WRITE_DATE   = DATE_CONFIG.writeDate;
+        const BIRTHDAY_12  = DATE_CONFIG.birthday;
+        const BIRTHDAY_18  = DATE_CONFIG.birthday;
+
+        // ==================== 配置常量 ====================
+        const CONFIG = {
+            PARTICLE_COUNT:       60,
+            PARTICLE_MIN_SPEED_Y: 0.1,
+            PARTICLE_MAX_SPEED_Y: 0.3,
+            PARTICLE_MAX_SPEED_X: 0.2,
+            PARTICLE_CONNECT_DIST: 100,
+            CONFETTI_COUNT:       80,
+            CONFETTI_LIFETIME:    4000,
+            MUSIC_VOLUME:         0.3,
+            COUNTDOWN_INTERVAL:   1000,
+        };
+        // 别名兼容
+        const PARTICLE_COUNT        = CONFIG.PARTICLE_COUNT;
+        const PARTICLE_MIN_SPEED_Y  = CONFIG.PARTICLE_MIN_SPEED_Y;
+        const PARTICLE_MAX_SPEED_Y  = CONFIG.PARTICLE_MAX_SPEED_Y;
+        const PARTICLE_MAX_SPEED_X  = CONFIG.PARTICLE_MAX_SPEED_X;
+        const PARTICLE_CONNECT_DIST = CONFIG.PARTICLE_CONNECT_DIST;
+        const CONFETTI_COUNT        = CONFIG.CONFETTI_COUNT;
+        const CONFETTI_LIFETIME     = CONFIG.CONFETTI_LIFETIME;
+        const MUSIC_VOLUME          = CONFIG.MUSIC_VOLUME;
+        const COUNTDOWN_INTERVAL    = CONFIG.COUNTDOWN_INTERVAL;
+        // Canvas roundRect polyfill（兼容旧浏览器）
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+                if (typeof r === 'number') r = [r, r, r, r];
+                const [tl, tr, br, bl] = r;
+                this.beginPath();
+                this.moveTo(x + tl, y);
+                this.lineTo(x + w - tr, y);
+                this.quadraticCurveTo(x + w, y, x + w, y + tr);
+                this.lineTo(x + w, y + h - br);
+                this.quadraticCurveTo(x + w, y + h, x + w - br, y + h);
+                this.lineTo(x + bl, y + h);
+                this.quadraticCurveTo(x, y + h, x, y + h - bl);
+                this.lineTo(x, y + tl);
+                this.quadraticCurveTo(x, y, x + tl, y);
+                this.closePath();
+                return this;
+            };
+        }
+
+
+        
+        // 更新当前时间显示
+        function updateCurrentTime() {
+            const now = new Date();
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric', 
+                weekday: 'long',
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: false
+            };
+            DOM.currentTime.textContent = '当前时间：' + now.toLocaleString('zh-CN', options);
+            
+            // 检查是否是弟弟的生日
+            const month = now.getMonth() + 1;
+            const day = now.getDate();
+            // 弟弟生日：每年8月18日
+            if (month === DATE_CONFIG.birthday.getMonth() + 1 && day === DATE_CONFIG.birthday.getDate()) {
+                const age = now.getFullYear() - BIRTHDAY_12.getFullYear();
+                const el = DOM.birthdayReminder;
+                // 隐藏彩蛋：不同年龄说不同话
+                const easterEggs = {
+                    13: '才过了一年，你长大了多少？',
+                    14: '初中啦！有没有比两年前更勇敢一点？',
+                    15: '三年了，你现在还会问那么多"为什么"吗？',
+                    16: '四年！离18岁只剩两年咯，哥哥在等你长大。',
+                    17: '还有一年！准备好了吗？',
+                    18: '🎉 18岁成人礼快乐！那封信等你很久了——快往下滑！',
+                };
+                if (easterEggs[age]) {
+                    el.innerHTML = `🎂 ${easterEggs[age]}`;
+                } else {
+                    el.innerHTML = `🎂 祝你${age}岁生日快乐！`;
+                }
+            } else {
+                DOM.birthdayReminder.textContent = '';
+            }
+        }
+        
+        // 更新倒计时
+        function updateCountdown() {
+            const now = new Date();
+            const target = new Date(TARGET_DATE);
+            
+            // 如果已到期
+            if (now >= target) {
+                DOM.years.textContent = '0';
+                DOM.months.textContent = '0';
+                DOM.days.textContent = '0';
+                DOM.hours.textContent = '0';
+                DOM.minutes.textContent = '0';
+                DOM.seconds.textContent = '0';
+                
+                if (!localStorage.getItem('unlocked')) {
+                    unlockLetter18();
+                }
+                return;
+            }
+            
+            // 精确计算年月日
+            let years = target.getFullYear() - now.getFullYear();
+            let months = target.getMonth() - now.getMonth();
+            let days = target.getDate() - now.getDate();
+            
+            // 如果天数不够减，借一个月
+            if (days < 0) {
+                months--;
+                // 获取上个月的天数
+                const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+                days += prevMonth.getDate();
+            }
+            
+            // 如果月份不够减，借一年
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            
+            // 计算时分秒
+            let hours = target.getHours() - now.getHours();
+            let minutes = target.getMinutes() - now.getMinutes();
+            let seconds = target.getSeconds() - now.getSeconds();
+            
+            if (seconds < 0) {
+                minutes--;
+                seconds += 60;
+            }
+            if (minutes < 0) {
+                hours--;
+                minutes += 60;
+            }
+            if (hours < 0) {
+                days--;
+                hours += 24;
+            }
+            
+            DOM.years.textContent = years;
+            DOM.months.textContent = months;
+            DOM.days.textContent = days;
+            DOM.hours.textContent = hours;
+            DOM.minutes.textContent = minutes;
+            DOM.seconds.textContent = seconds;
+        }
+        
+        // 尝试解锁
+        function tryUnlock() {
+            const now = new Date();
+            if (now >= TARGET_DATE) {
+                unlockLetter18();
+            } else {
+                showSeal();
+            }
+        }
+        
+        // 显示封印
+        function showSeal() {
+            DOM.sealOverlay.classList.add('active');
+        }
+        
+        // 关闭封印
+        function closeSeal() {
+            DOM.sealOverlay.classList.remove('active');
+        }
+        
+        // 解锁18岁信件（带错误边界）
+        function unlockLetter18() {
+            try {
+            const card = DOM.letter18;
+            const badge = DOM.age18badge;
+            
+            // 添加燃烧效果
+            card.classList.add('burning');
+            
+            // 添加翻页效果
+            setTimeout(() => {
+                card.classList.add('flipping');
+            }, 500);
+            
+            // 更新状态
+            setTimeout(() => {
+                card.classList.remove('burning', 'flipping', 'locked');
+                card.innerHTML = `
+                    <div class="letter-header" style="background: linear-gradient(135deg, rgba(155,89,182,0.1), rgba(245,166,35,0.1));">
+                        <div class="letter-meta">
+                            <div class="letter-age" style="background: linear-gradient(135deg, var(--age18), var(--age12)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">18</div>
+                            <div class="letter-info">
+                                <h3>给18岁的你</h3>
+                                <div class="timestamp">
+                                    <span>📅</span>
+                                    <span>写于 2026 年 8 月 25 日（弟弟12岁生日，农历七月十三）</span>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="letter-status open">✅ 已解锁</span>
+                    </div>
+                    <div class="letter-body">
+                        <div class="letter-content">
+                            <p>亲爱的弟弟：</p>
+                            <p>当你展开这封信的时候，你正好18岁了。恭喜你，成年了！</p>
+                            <p>18岁，是 legal age，是成人礼，是很多国家法律和意义上的成年。但我不想跟你讲这些大道理，因为你知道的，你比我更懂。</p>
+                            <p>我想说的是——<strong>生日快乐</strong>。</p>
+                            <p>这六年里，我看着你从一个什么都要问"为什么"的小孩，长成现在这个有自己的想法、会独立思考、会为了喜欢的事情投入热情的大男孩。你比我想象的要成熟，也要勇敢。</p>
+                            <p>关于选择，我有三个建议：</p>
+                            <p><strong>1. 选那个让你有动力学下去的</strong>，而不是听起来最"赚钱"或最"体面"的<br>
+                            <strong>2. 选那个能让你保持好奇心的</strong>，而不是你最擅长的（因为擅长可以练，好奇心难得）<br>
+                            <strong>3. 如果两个选项看起来差不多，选那个让你更害怕但更兴奋的</strong>——通常那就是你要去的方向</p>
+                            <p>人生的路不是轨道，是旷野。你可以绕路，可以回头，可以半路改方向。18岁选错了专业，40岁还能转行。这不是鸡汤，是真的。</p>
+                            <p><strong>无论你怎么选，我都会支持你。</strong> 因为你是我弟弟，这是天生的，不需要你证明什么。</p>
+                            <p>最后，记得给爸妈一个拥抱。他们看着你长大，比你以为的还要骄傲。</p>
+                            <p>祝你18岁生日快乐，做出属于自己的选择。</p>
+                        </div>
+                        <div class="letter-signature">爱你的哥哥 · 2026年夏写于你12岁时</div>
+                    </div>
+                `;
+                
+                badge.style.background = 'linear-gradient(135deg, var(--age12), var(--age18))';
+                badge.style.color = '#fff';
+                badge.textContent = '18岁 ✓';
+                
+                localStorage.setItem('unlocked', 'true');
+                
+                createConfetti();
+            }, 1200);
+            } catch(e) {
+                console.error('解锁信件异常:', e);
+                showTip('打开信件时出了点问题，请稍后再试');
+            }
+        }
+        
+        // 创建纸屑
+        function createConfetti() {
+            const colors = ['#f5a623', '#9b59b6', '#d4a574', '#e8c9a0', '#f5f0e8'];
+            
+            for (let i = 0; i < CONFETTI_COUNT; i++) {
+                setTimeout(() => {
+                    const piece = document.createElement('div');
+                    piece.style.cssText = `
+                        position: fixed;
+                        width: ${Math.random() * 12 + 6}px;
+                        height: ${Math.random() * 12 + 6}px;
+                        background: ${colors[Math.floor(Math.random() * colors.length)]};
+                        left: ${Math.random() * 100}vw;
+                        top: -20px;
+                        border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+                        z-index: 9999;
+                        pointer-events: none;
+                        animation: fall ${Math.random() * 2 + 2}s linear forwards;
+                    `;
+                    document.body.appendChild(piece);
+                    setTimeout(() => piece.remove(), CONFETTI_LIFETIME);
+                }, i * 30);
+            }
+        }
+        
+        // Canvas 背景动画
+        function initCanvas() {
+            const canvas = DOM.bgCanvas;
+            const ctx = canvas.getContext('2d');
+            
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+            
+            const particles = [];
+            class Particle {
+                constructor() {
+                    this.reset();
+                }
+                
+                reset() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.speedY = -Math.random() * PARTICLE_MAX_SPEED_Y - PARTICLE_MIN_SPEED_Y;
+                    this.speedX = (Math.random() - 0.5) * PARTICLE_MAX_SPEED_X;
+                    this.opacity = Math.random() * 0.4 + 0.1;
+                    this.color = Math.random() > 0.5 ? '#f5a623' : '#9b59b6';
+                }
+                
+                update() {
+                    this.y += this.speedY;
+                    this.x += this.speedX;
+                    
+                    if (this.y < -10) {
+                        this.reset();
+                        this.y = canvas.height + 10;
+                    }
+                }
+                
+                draw() {
+                    ctx.fillStyle = this.color;
+                    ctx.globalAlpha = this.opacity;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                particles.push(new Particle());
+            }
+            
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.globalAlpha = 1;
+                
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                
+                // 连线
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (dist < PARTICLE_CONNECT_DIST) {
+                            ctx.strokeStyle = `rgba(212, 165, 116, ${0.15 * (1 - dist / 100)})`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+        
+        // 初始化
+        // 错误边界：关键初始化函数，崩溃不影响页面主体
+                // ==================== DOM缓存 ====================
+        const $ = id => document.getElementById(id);
+        const DOM = {
+            currentTime: null, birthdayReminder: null,
+            years: null, months: null, days: null,
+            hours: null, minutes: null, seconds: null,
+            sealOverlay: null, lightbox: null,
+            lightboxImg: null, lightboxCaption: null, lightboxCounter: null,
+            shareOverlay: null, shareImg: null, shareCanvas: null, qrCanvas: null,
+            shareLinkInput: null, copyBtn: null,
+            letter18: null, age18badge: null,
+            bgCanvas: null, bgMusic: null, musicControl: null,
+        };
+        function cacheDOM() { for (const key in DOM) DOM[key] = $(key); }
+        // ==================== 定时器管理 ====================
+        const timers = [];
+        function scheduleTimer(fn, delay) {
+            const id = setTimeout(() => { timers.splice(timers.indexOf(id), 1); fn(); }, delay);
+            timers.push(id);
+            return id;
+        }
+        function clearAllTimers() { timers.forEach(id => clearTimeout(id)); timers.length = 0; }
+        // ==================== 魔法数字常量 ====================
+        const SHARE_W = 600, SHARE_H = 900;
+        const SHARE_BOX_W = 72, SHARE_BOX_H = 60, SHARE_GAP = 8;
+        const QR_SIZE = 150;
+        const ANIM_FLIP_DELAY = 500;
+        const ANIM_UNLOCK_DELAY = 1200;
+        const ANIM_CONFETTI_INTERVAL = 30;
+        const TIP_DURATION = 3000;
+        const BTN_RESET_DELAY = 2000;
+
+
+
+
+        // ==================== QR码生成库 ====================
+        var QRCode=function(){var e=function(e,t){this.mode=t;this.data=e;this.getLength=function(){return e.length}};var t=function(e,t){this.typeNumber=e;this.errorCorrectLevel=t;this.modules=null;this.moduleCount=0;this.dataCache=null;this.dataList=[]};t.prototype.add=function(e){this.dataList.push(e);this.dataCache=null};t.prototype.isDark=function(e,t){if(e<0||this.moduleCount<=e||t<0||this.moduleCount<=t)throw Error(e+","+t);return this.modules[e][t]};t.prototype.getModuleCount=function(){return this.moduleCount};t.prototype.make=function(){this.moduleCount=this.typeNumber*4+17;this.modules=Array(this.moduleCount);for(var e=0;e<this.moduleCount;e++){this.modules[e]=Array(this.moduleCount);for(var t=0;t<this.moduleCount;t++)this.modules[e][t]=null}this.placePattern();this.placeData()};t.prototype.placePattern=function(){for(var e=-1;e<=7;e++)for(var t=-1;t<=7;t++)this.modules[e][t]=this.isPositionPattern(e,t)||this.isPositionPattern(e,this.moduleCount-8+t)||this.isPositionPattern(this.moduleCount-8+e,t)};t.prototype.isPositionPattern=function(e,t){return 0<=e&&e<=6&&0<=t&&t<=6&&(0==e||5==e||0==t||5==t||1<=e&&e<=4&&1<=t&&t<=4)};t.prototype.placeData=function(e){for(var t=this.moduleCount-1,r=7,n=0;n<e.length;n++)for(var o=e[n],s=7;s>=0;s--)this.modules[t][t-1]=1&o>>>s&1};t.prototype.createCanvas=function(e){var t=document.createElement("canvas");t.width=e;t.height=e;var r=t.getContext("2d");r.fillStyle="#fff";r.fillRect(0,0,e,e);r.fillStyle="#000";for(var n=0;n<this.moduleCount;n++)for(var o=0;o<this.moduleCount;o++)if(this.modules[n][o])for(var s=n*e/this.moduleCount,a=o*e/this.moduleCount,c=e/this.moduleCount;r.fillRect(s,a,c,c),s+=c,a+=c);return t};return{Code:t,ErrorCorrectLevel:{L:1,M:0,Q:3,H:2}}}();
 function safeInit() {
             try { cacheDOM(); } catch(e) { console.error('DOM缓存失败:', e); }
             try { updateCurrentTime(); } catch(e) { console.error('时间初始化失败:', e); }
