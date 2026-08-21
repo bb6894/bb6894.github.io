@@ -1216,8 +1216,6 @@
             window.addEventListener('resize', resize);
             
             const particles = [];
-            const PARTICLE_COUNT = 60;
-            
             class Particle {
                 constructor() {
                     this.reset();
@@ -1492,7 +1490,7 @@
         let years = target.getFullYear() - now.getFullYear();
         let months = target.getMonth() - now.getMonth();
         let days = target.getDate() - now.getDate();
-        if (days < 0) { months--; const pm = new Date(target.getFullYear(), target.getMonth(), 0); days += pm.getDate(); }
+        if (days < 0) { months--; const pm = new Date(now.getFullYear(), now.getMonth(), 0); days += pm.getDate(); }
         if (months < 0) { years--; months += 12; }
         const hours = target.getHours() - now.getHours();
         const minutes = target.getMinutes() - now.getMinutes();
@@ -1599,6 +1597,8 @@
     window.openLightbox = openLightbox;
     window.closeLightbox = closeLightbox;
     window.navLightbox = navLightbox;
+    window.generateShareCard = generateShareCard;
+    window.closeShareOverlay = closeShareOverlay;
 })();</script>
 </body>
 </html>
