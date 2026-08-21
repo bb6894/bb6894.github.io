@@ -1821,6 +1821,18 @@ const canvas = DOM.shareCanvas;
     window.navLightbox = navLightbox;
     window.generateShareCard = generateShareCard;
     window.hideShareOverlay = closeShareOverlay;
+
+        // ===== 灯箱触摸手势 =====
+        let _touchStartX = 0;
+        document.addEventListener('touchstart', e => {
+            if (!DOM.lightbox || !DOM.lightbox.classList.contains('active')) return;
+            _touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+        document.addEventListener('touchend', e => {
+            if (!DOM.lightbox || !DOM.lightbox.classList.contains('active')) return;
+            const diff = _touchStartX - e.changedTouches[0].screenX;
+            if (Math.abs(diff) > 50 && typeof navLightbox === 'function') navLightbox(diff > 0 ? 1 : -1);
+        }, { passive: true });
 })();</script>
 </body>
 </html>
