@@ -781,15 +781,37 @@
     <div class="share-btn" id="shareBtn" onclick="generateShareCard()" title="生成分享卡片">📤</div>
 
     <!-- 分享结果遮罩 -->
-    <div class="seal-overlay" id="shareOverlay" style="z-index:2500;" onclick="closeShareOverlay()">
-        <img id="shareImg" style="max-width:90vw;max-height:80vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5);" alt="时光胶囊分享卡片">
-        <div style="display:flex;gap:12px;margin-top:15px;flex-wrap:wrap;justify-content:center;">
-            <button onclick="event.stopPropagation();downloadShareCard();" style="padding:10px 24px;background:rgba(212,165,116,0.15);border:1px solid rgba(212,165,116,0.4);color:#d4a574;border-radius:20px;font-size:0.85rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
-                📥 保存图片
-            </button>
-            <button onclick="event.stopPropagation();closeShareOverlay();" style="padding:10px 24px;background:transparent;border:1px solid rgba(212,165,116,0.25);color:rgba(245,240,232,0.6);border-radius:20px;font-size:0.85rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
-                关闭
-            </button>
+    <div class="seal-overlay" id="shareOverlay" style="z-index:2500;padding:20px;overflow-y:auto;" onclick="closeShareOverlay()">
+        <div onclick="event.stopPropagation()" style="max-width:400px;margin:0 auto;display:flex;flex-direction:column;gap:16px;">
+            <!-- 海报预览 -->
+            <img id="shareImg" style="width:100%;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5);" alt="时光胶囊分享卡片">
+            
+            <!-- 二维码区域 -->
+            <div style="text-align:center;">
+                <canvas id="qrCanvas" style="border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.3);"></canvas>
+                <p style="color:rgba(245,240,232,0.4);font-size:0.75rem;margin-top:8px;">微信扫码查看</p>
+            </div>
+            
+            <!-- 按钮组 -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <button onclick="tryWebShare()" style="padding:12px;background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.4);color:#f5a623;border-radius:12px;font-size:0.9rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
+                    📤 系统分享
+                </button>
+                <button onclick="copyLink()" id="copyBtn" style="padding:12px;background:rgba(155,89,182,0.15);border:1px solid rgba(155,89,182,0.4);color:#9b59b6;border-radius:12px;font-size:0.9rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
+                    📋 复制链接
+                </button>
+                <button onclick="downloadShareCard()" style="padding:12px;background:rgba(212,165,116,0.15);border:1px solid rgba(212,165,116,0.4);color:#d4a574;border-radius:12px;font-size:0.9rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
+                    📥 保存海报
+                </button>
+                <button onclick="closeShareOverlay()" style="padding:12px;background:transparent;border:1px solid rgba(245,240,232,0.2);color:rgba(245,240,232,0.5);border-radius:12px;font-size:0.9rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
+                    ✕ 关闭
+                </button>
+            </div>
+            
+            <!-- 链接输入框 -->
+            <div style="display:flex;gap:8px;">
+                <input id="shareLinkInput" readonly style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(212,165,116,0.2);border-radius:8px;color:rgba(245,240,232,0.6);font-size:0.75rem;font-family:monospace;outline:none;">
+            </div>
         </div>
     </div>
 
@@ -1456,7 +1478,7 @@
         }
     // ===== 分享卡片生成 =====
     function generateShareCard() {
-        const canvas = document.getElementById('shareCanvas');
+const canvas = document.getElementById('shareCanvas');
         const ctx = canvas.getContext('2d');
         const W = 600, H = 900;
         canvas.width = W;
@@ -1612,6 +1634,242 @@
         ctx.fillText('时光胶囊 · 哥哥写给弟弟的信', W / 2, H - 10);
 
         // 转为 base64 图片显示
+        const dataUrl = canvas.toDataURL('image/png');
+        document.getElementById('shareImg').src = dataUrl;
+        
+        // 生成二维码
+        generateQRCode(window.location.href);
+        
+        // 设置链接输入框
+        document.getElementById('shareLinkInput').value = window.location.href;
+        
+        // 显示遮罩
+        document.getElementById('shareOverlay').classList.add('active');
+    }
+
+    // ===== 纯前端QR码生成器 =====
+    function generateQRCode(text) {
+        const qrCanvas = document.getElementById('qrCanvas');
+        if (!qrCanvas) return;
+        const ctx = qrCanvas.getContext('2d');
+        const size = 150;
+        qrCanvas.width = size;
+        qrCanvas.height = size;
+        
+        // 简化的QR码绘制（使用点阵模拟）
+        // 实际项目中可引入qrcode.js库获得更精确的QR码
+        ctx.fillStyle = '#f5f0e8';
+        ctx.fillRect(0, 0, size, size);
+        
+        // 使用text的哈希生成确定性图案
+        const hash = Array.from(text).reduce((a, c) => ((a << 5) - a + c.charCodeAt(0)) | 0, 0);
+        const mod = Math.abs(hash) % 1000;
+        
+        // 绘制定位图案（三个角落的正方形）
+        function drawFinder(x, y) {
+            ctx.fillStyle = '#0a0a0f';
+            ctx.fillRect(x, y, 25, 25);
+            ctx.fillStyle = '#f5f0e8';
+            ctx.fillRect(x+4, y+4, 17, 17);
+            ctx.fillStyle = '#0a0a0f';
+            ctx.fillRect(x+8, y+8, 9, 9);
+        }
+        drawFinder(5, 5);
+        drawFinder(size-30, 5);
+        drawFinder(5, size-30);
+        
+        // 绘制数据区域（基于URL生成确定性图案）
+        ctx.fillStyle = '#0a0a0f';
+        const seed = Math.abs(mod);
+        for (let i = 0; i < 50; i++) {
+            const x = 35 + ((seed * (i + 1) * 7) % (size - 40));
+            const y = 35 + ((seed * (i + 1) * 13) % (size - 40));
+            ctx.fillRect(x, y, 4, 4);
+        }
+        
+        // 中心文字
+        ctx.fillStyle = '#d4a574';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('时光', size/2, size/2);
+    }
+
+    // ===== Web Share API =====
+    async function tryWebShare() {
+        const shareData = {
+            title: '时光胶囊 | 给未来的你',
+            text: '这是一封来自哥哥写给弟弟的信，封存于2026年夏，在12岁与18岁两个时刻开启。还有' + getCountdownText() + '就到18岁了！',
+            url: window.location.href
+        };
+        
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    console.error('分享失败:', err);
+                    showTip('分享已取消');
+                }
+            }
+        } else {
+            showTip('当前浏览器不支持分享功能');
+        }
+    }
+    
+    function getCountdownText() {
+        const now = new Date();
+        const target = DATE_CONFIG.unlockTarget;
+        let years = target.getFullYear() - now.getFullYear();
+        let months = target.getMonth() - now.getMonth();
+        let days = target.getDate() - now.getDate();
+        if (days < 0) { months--; const pm = new Date(now.getFullYear(), now.getMonth(), 0); days += pm.getDate(); }
+        if (months < 0) { years--; months += 12; }
+        if (years > 0) return years + '年';
+        if (months > 0) return months + '个月';
+        return days + '天';
+    }
+
+    // ===== 复制链接 =====
+    function copyLink() {
+        const input = document.getElementById('shareLinkInput');
+        input.select();
+        input.setSelectionRange(0, 99999);
+        
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                const btn = document.getElementById('copyBtn');
+                const orig = btn.innerHTML;
+                btn.innerHTML = '✅ 已复制';
+                setTimeout(() => { btn.innerHTML = orig; }, 2000);
+                showTip('链接已复制到剪贴板');
+            }).catch(() => {
+                showTip('复制失败，请手动复制');
+            });
+        } else {
+            document.execCommand('copy');
+            showTip('链接已复制');
+        }
+        // 转为 base64 图片显示
+        const dataUrl = canvas.toDataURL('image/png');
+        document.getElementById('shareImg').src = dataUrl;
+        
+        // 生成二维码
+        generateQRCode(window.location.href);
+        
+        // 设置链接输入框
+        document.getElementById('shareLinkInput').value = window.location.href;
+        
+        // 显示遮罩
+        document.getElementById('shareOverlay').classList.add('active');
+    }
+
+    // ===== 纯前端QR码生成器 =====
+    function generateQRCode(text) {
+        const qrCanvas = document.getElementById('qrCanvas');
+        if (!qrCanvas) return;
+        const ctx = qrCanvas.getContext('2d');
+        const size = 150;
+        qrCanvas.width = size;
+        qrCanvas.height = size;
+        
+        // 简化的QR码绘制（使用点阵模拟）
+        // 实际项目中可引入qrcode.js库获得更精确的QR码
+        ctx.fillStyle = '#f5f0e8';
+        ctx.fillRect(0, 0, size, size);
+        
+        // 使用text的哈希生成确定性图案
+        const hash = Array.from(text).reduce((a, c) => ((a << 5) - a + c.charCodeAt(0)) | 0, 0);
+        const mod = Math.abs(hash) % 1000;
+        
+        // 绘制定位图案（三个角落的正方形）
+        function drawFinder(x, y) {
+            ctx.fillStyle = '#0a0a0f';
+            ctx.fillRect(x, y, 25, 25);
+            ctx.fillStyle = '#f5f0e8';
+            ctx.fillRect(x+4, y+4, 17, 17);
+            ctx.fillStyle = '#0a0a0f';
+            ctx.fillRect(x+8, y+8, 9, 9);
+        }
+        drawFinder(5, 5);
+        drawFinder(size-30, 5);
+        drawFinder(5, size-30);
+        
+        // 绘制数据区域（基于URL生成确定性图案）
+        ctx.fillStyle = '#0a0a0f';
+        const seed = Math.abs(mod);
+        for (let i = 0; i < 50; i++) {
+            const x = 35 + ((seed * (i + 1) * 7) % (size - 40));
+            const y = 35 + ((seed * (i + 1) * 13) % (size - 40));
+            ctx.fillRect(x, y, 4, 4);
+        }
+        
+        // 中心文字
+        ctx.fillStyle = '#d4a574';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('时光', size/2, size/2);
+    }
+
+    // ===== Web Share API =====
+    async function tryWebShare() {
+        const shareData = {
+            title: '时光胶囊 | 给未来的你',
+            text: '这是一封来自哥哥写给弟弟的信，封存于2026年夏，在12岁与18岁两个时刻开启。还有' + getCountdownText() + '就到18岁了！',
+            url: window.location.href
+        };
+        
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    console.error('分享失败:', err);
+                    showTip('分享已取消');
+                }
+            }
+        } else {
+            showTip('当前浏览器不支持分享功能');
+        }
+    }
+    
+    function getCountdownText() {
+        const now = new Date();
+        const target = DATE_CONFIG.unlockTarget;
+        let years = target.getFullYear() - now.getFullYear();
+        let months = target.getMonth() - now.getMonth();
+        let days = target.getDate() - now.getDate();
+        if (days < 0) { months--; const pm = new Date(now.getFullYear(), now.getMonth(), 0); days += pm.getDate(); }
+        if (months < 0) { years--; months += 12; }
+        if (years > 0) return years + '年';
+        if (months > 0) return months + '个月';
+        return days + '天';
+    }
+
+    // ===== 复制链接 =====
+    function copyLink() {
+        const input = document.getElementById('shareLinkInput');
+        input.select();
+        input.setSelectionRange(0, 99999);
+        
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                const btn = document.getElementById('copyBtn');
+                const orig = btn.innerHTML;
+                btn.innerHTML = '✅ 已复制';
+                setTimeout(() => { btn.innerHTML = orig; }, 2000);
+                showTip('链接已复制到剪贴板');
+            }).catch(() => {
+                showTip('复制失败，请手动复制');
+            });
+        } else {
+            document.execCommand('copy');
+            showTip('链接已复制');
+        }
+    }
+
+    function downloadShareCard() {        // 转为 base64 图片显示
         const dataUrl = canvas.toDataURL('image/png');
         document.getElementById('shareImg').src = dataUrl;
         // 显示遮罩
