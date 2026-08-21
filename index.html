@@ -588,7 +588,7 @@
 </head>
 <body>
     <!-- 背景音乐 - Kiss The Rain -->
-    <audio id="bgMusic" loop preload="auto">
+    <audio id="bgMusic" loop preload="metadata">
         <source src="music.mp3" type="audio/mpeg">
     </audio>
     
@@ -693,14 +693,14 @@
                 <div class="photo-gallery">
                     <h4 style="text-align:center; margin-bottom:20px; color:#888; font-size:0.9rem;">成长瞬间</h4>
                     <div class="photos-grid">
-                        <div class="photo-item"><img src="1787238756709_d.jpg" alt="照片1"><div class="photo-caption">小时候</div></div>
-                        <div class="photo-item"><img src="1787238831642_d.jpg" alt="照片2"><div class="photo-caption">童年</div></div>
-                        <div class="photo-item"><img src="1787239180717_d.jpg" alt="照片3"><div class="photo-caption">玩耍</div></div>
-                        <div class="photo-item"><img src="1787239252000_d.jpg" alt="照片4"><div class="photo-caption">笑脸</div></div>
-                        <div class="photo-item"><img src="1787239308278_d.jpg" alt="照片5"><div class="photo-caption">成长</div></div>
-                        <div class="photo-item"><img src="1787239579111_d.jpg" alt="照片6"><div class="photo-caption">快乐</div></div>
-                        <div class="photo-item"><img src="1787239630260_d.jpg" alt="照片7"><div class="photo-caption">回忆</div></div>
-                        <div class="photo-item"><img src="1787239642585_d.jpg" alt="照片8"><div class="photo-caption">两岁</div></div>
+                        <div class="photo-item"><img src="1787238756709_d.jpg" alt="照片1" loading="lazy" decoding="async"><div class="photo-caption">小时候</div></div>
+                        <div class="photo-item"><img src="1787238831642_d.jpg" alt="照片2" loading="lazy" decoding="async"><div class="photo-caption">童年</div></div>
+                        <div class="photo-item"><img src="1787239180717_d.jpg" alt="照片3" loading="lazy" decoding="async"><div class="photo-caption">玩耍</div></div>
+                        <div class="photo-item"><img src="1787239252000_d.jpg" alt="照片4" loading="lazy" decoding="async"><div class="photo-caption">笑脸</div></div>
+                        <div class="photo-item"><img src="1787239308278_d.jpg" alt="照片5" loading="lazy" decoding="async"><div class="photo-caption">成长</div></div>
+                        <div class="photo-item"><img src="1787239579111_d.jpg" alt="照片6" loading="lazy" decoding="async"><div class="photo-caption">快乐</div></div>
+                        <div class="photo-item"><img src="1787239630260_d.jpg" alt="照片7" loading="lazy" decoding="async"><div class="photo-caption">回忆</div></div>
+                        <div class="photo-item"><img src="1787239642585_d.jpg" alt="照片8" loading="lazy" decoding="async"><div class="photo-caption">两岁</div></div>
                     </div>
                 </div>
                 
@@ -783,7 +783,7 @@
             // 检查是否是弟弟的生日
             const month = now.getMonth() + 1;
             const day = now.getDate();
-            if (month === 8 && day === 25) {
+            if (month === 8 && day === 18) {
                 const age = now.getFullYear() - BIRTHDAY_12.getFullYear();
                 document.getElementById('birthdayReminder').innerHTML = `🎂 今天是你的${age}岁生日！`;
             } else {
@@ -805,7 +805,7 @@
                 document.getElementById('minutes').textContent = '0';
                 document.getElementById('seconds').textContent = '0';
                 
-                if (!sessionStorage.getItem('unlocked')) {
+                if (!localStorage.getItem('unlocked')) {
                     unlockLetter18();
                 }
                 return;
@@ -820,7 +820,7 @@
             if (days < 0) {
                 months--;
                 // 获取上个月的天数
-                const prevMonth = new Date(target.getFullYear(), target.getMonth(), 0);
+                const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
                 days += prevMonth.getDate();
             }
             
@@ -900,7 +900,7 @@
                                 <h3>给18岁的你</h3>
                                 <div class="timestamp">
                                     <span>📅</span>
-                                    <span>写于 2026 年 8 月 20 日（提前封存）</span>
+                                    <span>写于 2026 年 8 月 25 日（弟弟12岁生日，农历七月十三）</span>
                                 </div>
                             </div>
                         </div>
@@ -930,7 +930,7 @@
                 badge.style.color = '#fff';
                 badge.textContent = '18岁 ✓';
                 
-                sessionStorage.setItem('unlocked', 'true');
+                localStorage.setItem('unlocked', 'true');
                 
                 createConfetti();
             }, 1200);
@@ -1025,7 +1025,7 @@
                 
                 // 连线
                 for (let i = 0; i < particles.length; i++) {
-                    for (let j = i; j < particles.length; j++) {
+                    for (let j = i + 1; j < particles.length; j++) {
                         const dx = particles[i].x - particles[j].x;
                         const dy = particles[i].y - particles[j].y;
                         const dist = Math.sqrt(dx * dx + dy * dy);
@@ -1052,44 +1052,32 @@
         initCanvas();
         
         // 音乐控制
-        let musicPlaying = false;
         const bgMusic = document.getElementById('bgMusic');
         const musicControl = document.getElementById('musicControl');
-        
-        // 预加载音频
-        bgMusic.preload = 'auto';
-        
-        // 监听音频加载事件
-        bgMusic.addEventListener('canplay', () => {
-            console.log('音频加载完成');
-        });
-        
+        bgMusic.preload = 'metadata';
+        bgMusic.volume = 0.3;
+
         bgMusic.addEventListener('error', (e) => {
             console.error('音频加载失败:', e);
             showTip('音乐加载失败，请稍后重试');
         });
-        
+
         function toggleMusic() {
-            if (musicPlaying) {
-                bgMusic.pause();
-                musicControl.classList.add('paused');
-                musicControl.querySelector('.music-icon').textContent = '🔇';
-            } else {
-                // 重新加载音频以确保最新
-                bgMusic.load();
+            if (bgMusic.paused) {
                 const playPromise = bgMusic.play();
-                
                 if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        musicControl.classList.remove('paused');
-                        musicControl.querySelector('.music-icon').textContent = '🎵';
-                    }).catch(e => {
+                    playPromise.catch(e => {
                         console.log('播放被阻止:', e);
                         showTip('请点击图标播放音乐');
                     });
                 }
+                musicControl.classList.remove('paused');
+                musicControl.querySelector('.music-icon').textContent = '🎵';
+            } else {
+                bgMusic.pause();
+                musicControl.classList.add('paused');
+                musicControl.querySelector('.music-icon').textContent = '🔇';
             }
-            musicPlaying = !musicPlaying;
         }
         
         // 显示提示
@@ -1112,27 +1100,6 @@
             setTimeout(() => tip.remove(), 3000);
         }
         
-        // 页面加载完成后尝试自动播放
-        window.addEventListener('load', () => {
-            // 延迟一点确保音频已加载
-            setTimeout(() => {
-                bgMusic.volume = 0.3; // 设置合适音量
-                console.log('尝试自动播放音乐...');
-                // 尝试播放（可能被浏览器阻止）
-                const playPromise = bgMusic.play();
-                
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        console.log('音乐自动播放成功');
-                        musicPlaying = true;
-                        musicControl.classList.remove('paused');
-                    }).catch(e => {
-                        console.log('自动播放被阻止:', e);
-                    });
-                }
-            }, 1000); // 增加延迟到1秒
-        });
-        
         // 添加CSS动画
         const style = document.createElement('style');
         style.textContent = `
@@ -1142,9 +1109,12 @@
                 80% { opacity: 1; transform: translateY(0); }
                 100% { opacity: 0; transform: translateY(-10px); }
             }
+            @keyframes fall {
+                to { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+            }
         `;
         document.head.appendChild(style);
-        
+
         setInterval(updateCurrentTime, 1000);
         setInterval(updateCountdown, 1000);
         
