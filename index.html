@@ -1699,25 +1699,40 @@ const canvas = DOM.shareCanvas;
     }
 
     // ===== 纯前端QR码生成器 =====
-    function generateQRCode(text) {
+        function generateQRCode(text) {
         const qrCanvas = DOM.qrCanvas;
         if (!qrCanvas) return;
-        const ctx = qrCanvas.getContext('2d');
-        const size = 150;
-        qrCanvas.width = size;
-        qrCanvas.height = size;
-        
-        // 简化的QR码绘制（使用点阵模拟）
-        // 实际项目中可引入qrcode.js库获得更精确的QR码
-        ctx.fillStyle = '#f5f0e8';
-        ctx.fillRect(0, 0, size, size);
-        
-        // 使用text的哈希生成确定性图案
-        const hash = Array.from(text).reduce((a, c) => ((a << 5) - a + c.charCodeAt(0)) | 0, 0);
-        const mod = Math.abs(hash) % 1000;
-        
-        // 绘制定位图案（三个角落的正方形）
-        function drawFinder(x, y) {
+        try {
+            const code = new QRCode.Code(4, QRCode.ErrorCorrectLevel.H);
+            code.addData(text);
+            code.make();
+            const size = 150;
+            qrCanvas.width = size;
+            qrCanvas.height = size;
+            const ctx = qrCanvas.getContext('2d');
+            ctx.fillStyle = '#f5f0e8';
+            ctx.fillRect(0, 0, size, size);
+            ctx.fillStyle = '#0a0a0f';
+            const cellSize = size / code.moduleCount;
+            for (let row = 0; row < code.moduleCount; row++) {
+                for (let col = 0; col < code.moduleCount; col++) {
+                    if (code.modules[row][col]) {
+                        ctx.fillRect(col * cellSize, row * cellSize, cellSize + 0.5, cellSize + 0.5);
+                    }
+                }
+            }
+        } catch(e) {
+            console.error('QR码生成失败:', e);
+            const ctx = qrCanvas.getContext('2d');
+            ctx.fillStyle = '#f5f0e8';
+            ctx.fillRect(0, 0, 150, 150);
+            ctx.fillStyle = '#0a0a0f';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('扫码查看', 75, 75);
+        }
+    }function drawFinder(x, y) {
             ctx.fillStyle = '#0a0a0f';
             ctx.fillRect(x, y, 25, 25);
             ctx.fillStyle = '#f5f0e8';
