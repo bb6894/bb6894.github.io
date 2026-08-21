@@ -637,6 +637,29 @@
             .photos-grid { grid-template-columns: repeat(2, 1fr); }
         }
         
+        /* 分享按钮 */
+        .share-btn {
+            position: fixed;
+            bottom: 90px;
+            right: 30px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(212, 165, 116, 0.25);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+            font-size: 1.2rem;
+        }
+        .share-btn:hover {
+            background: rgba(212, 165, 116, 0.15);
+            transform: scale(1.1);
+        }
         /* 音乐控制按钮 */
         .music-control {
             position: fixed;
@@ -729,6 +752,15 @@
         <span style="color:rgba(212,165,116,0.45);font-size:0.65rem;letter-spacing:1px;margin-top:2px;">Kiss The Rain</span>
     </div>
     
+    <!-- 分享按钮 -->
+    <div class="share-btn" id="shareBtn" onclick="generateShareCard()" title="生成分享卡片">📤</div>
+
+    <!-- 分享结果遮罩 -->
+    <div class="seal-overlay" id="shareOverlay" style="z-index:2500;" onclick="closeShareOverlay()">
+        <canvas id="shareCanvas" style="max-width:90vw;max-height:80vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5);"></canvas>
+        <p style="color:rgba(245,240,232,0.5);font-size:0.8rem;margin-top:15px;">长按保存图片分享到朋友圈</p>
+    </div>
+
     <!-- 背景Canvas -->
     <canvas class="bg-canvas" id="bgCanvas"></canvas>
     
@@ -933,6 +965,26 @@
         const CONFETTI_LIFETIME     = CONFIG.CONFETTI_LIFETIME;
         const MUSIC_VOLUME          = CONFIG.MUSIC_VOLUME;
         const COUNTDOWN_INTERVAL    = CONFIG.COUNTDOWN_INTERVAL;
+        // Canvas roundRect polyfill（兼容旧浏览器）
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+                if (typeof r === 'number') r = [r, r, r, r];
+                const [tl, tr, br, bl] = r;
+                this.beginPath();
+                this.moveTo(x + tl, y);
+                this.lineTo(x + w - tr, y);
+                this.quadraticCurveTo(x + w, y, x + w, y + tr);
+                this.lineTo(x + w, y + h - br);
+                this.quadraticCurveTo(x + w, y + h, x + w - br, y + h);
+                this.lineTo(x + bl, y + h);
+                this.quadraticCurveTo(x, y + h, x, y + h - bl);
+                this.lineTo(x, y + tl);
+                this.quadraticCurveTo(x, y, x + tl, y);
+                this.closePath();
+                return this;
+            };
+        }
+
 
         
         // 更新当前时间显示
@@ -956,7 +1008,21 @@
             // 弟弟生日：每年8月18日
             if (month === DATE_CONFIG.birthday.getMonth() + 1 && day === DATE_CONFIG.birthday.getDate()) {
                 const age = now.getFullYear() - BIRTHDAY_12.getFullYear();
-                document.getElementById('birthdayReminder').innerHTML = `🎂 今天是你的${age}岁生日！`;
+                const el = document.getElementById('birthdayReminder');
+                // 隐藏彩蛋：不同年龄说不同话
+                const easterEggs = {
+                    13: '才过了一年，你长大了多少？',
+                    14: '初中啦！有没有比两年前更勇敢一点？',
+                    15: '三年了，你现在还会问那么多"为什么"吗？',
+                    16: '四年！离18岁只剩两年咯，哥哥在等你长大。',
+                    17: '还有一年！准备好了吗？',
+                    18: '🎉 18岁成人礼快乐！那封信等你很久了——快往下滑！',
+                };
+                if (easterEggs[age]) {
+                    el.innerHTML = `🎂 ${easterEggs[age]}`;
+                } else {
+                    el.innerHTML = `🎂 祝你${age}岁生日快乐！`;
+                }
             } else {
                 document.getElementById('birthdayReminder').textContent = '';
             }
@@ -1359,6 +1425,171 @@
             unlockLetter18();
         }
 }
+    // ===== 分享卡片生成 =====
+    function generateShareCard() {
+        const canvas = document.getElementById('shareCanvas');
+        const ctx = canvas.getContext('2d');
+        const W = 600, H = 900;
+        canvas.width = W;
+        canvas.height = H;
+
+        // 背景渐变
+        const grad = ctx.createLinearGradient(0, 0, W, H);
+        grad.addColorStop(0, '#0a0a0f');
+        grad.addColorStop(1, '#1a1520');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+
+        // 装饰粒子
+        const rng = (s) => { let x = Math.sin(s) * 10000; return x - Math.floor(x); };
+        for (let i = 0; i < 60; i++) {
+            const x = rng(i * 7.1) * W;
+            const y = rng(i * 13.3) * H;
+            const r = rng(i * 3.7) * 2 + 0.5;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.fillStyle = rng(i * 11) > 0.5 ? 'rgba(245,166,35,0.3)' : 'rgba(155,89,182,0.3)';
+            ctx.fill();
+        }
+
+        // 顶部装饰线
+        ctx.strokeStyle = 'rgba(212,165,116,0.3)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(60, 80);
+        ctx.lineTo(W - 60, 80);
+        ctx.stroke();
+
+        // 标题
+        ctx.fillStyle = '#d4a574';
+        ctx.font = '600 14px "Noto Serif SC", serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('时光胶囊', W / 2, 55);
+
+        // 主标题
+        ctx.font = '700 32px "Ma Shan Zheng", "Noto Serif SC", cursive';
+        const titleGrad = ctx.createLinearGradient(W/2 - 100, 0, W/2 + 100, 0);
+        titleGrad.addColorStop(0, '#f5a623');
+        titleGrad.addColorStop(1, '#9b59b6');
+        ctx.fillStyle = titleGrad;
+        ctx.fillText('给未来的你', W / 2, 110);
+
+        // 副标题
+        ctx.fillStyle = 'rgba(245,240,232,0.5)';
+        ctx.font = '400 13px "Noto Serif SC", serif';
+        ctx.fillText('一封来自哥哥的信 · 封存于 2026年夏', W / 2, 140);
+
+        // 分隔线
+        ctx.strokeStyle = 'rgba(212,165,116,0.15)';
+        ctx.beginPath();
+        ctx.moveTo(80, 165);
+        ctx.lineTo(W - 80, 165);
+        ctx.stroke();
+
+        // 倒计时区域
+        const now = new Date();
+        const target = DATE_CONFIG.unlockTarget;
+        let years = target.getFullYear() - now.getFullYear();
+        let months = target.getMonth() - now.getMonth();
+        let days = target.getDate() - now.getDate();
+        if (days < 0) { months--; const pm = new Date(target.getFullYear(), target.getMonth(), 0); days += pm.getDate(); }
+        if (months < 0) { years--; months += 12; }
+        const hours = target.getHours() - now.getHours();
+        const minutes = target.getMinutes() - now.getMinutes();
+        const seconds = target.getSeconds() - now.getSeconds();
+
+        ctx.fillStyle = 'rgba(245,240,232,0.4)';
+        ctx.font = '400 12px "Noto Serif SC", serif';
+        ctx.fillText('距离 18 岁生日还有', W / 2, 200);
+
+        // 倒计时数字
+        const timeUnits = [
+            { val: years, label: '年' },
+            { val: months, label: '月' },
+            { val: days, label: '天' },
+            { val: hours < 0 ? 0 : hours, label: '时' },
+            { val: minutes < 0 ? 0 : minutes, label: '分' },
+            { val: seconds < 0 ? 0 : seconds, label: '秒' },
+        ];
+
+        const boxW = 72, boxH = 60, gap = 8;
+        const totalW = timeUnits.length * boxW + (timeUnits.length - 1) * gap;
+        const startX = (W - totalW) / 2;
+
+        timeUnits.forEach((unit, i) => {
+            const x = startX + i * (boxW + gap);
+            // 背景框
+            ctx.fillStyle = 'rgba(255,255,255,0.04)';
+            ctx.strokeStyle = 'rgba(212,165,116,0.2)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.roundRect(x, 220, boxW, boxH, 8);
+            ctx.fill();
+            ctx.stroke();
+            // 数字
+            ctx.fillStyle = '#d4a574';
+            ctx.font = '700 24px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(unit.val, x + boxW / 2, 258);
+            // 标签
+            ctx.fillStyle = 'rgba(245,240,232,0.35)';
+            ctx.font = '400 10px "Noto Serif SC", serif';
+            ctx.fillText(unit.label, x + boxW / 2, 275);
+        });
+
+        // 分隔线
+        ctx.strokeStyle = 'rgba(212,165,116,0.15)';
+        ctx.beginPath();
+        ctx.moveTo(80, 310);
+        ctx.lineTo(W - 80, 310);
+        ctx.stroke();
+
+        // 信件简介
+        ctx.fillStyle = 'rgba(245,240,232,0.6)';
+        ctx.font = '400 13px "Noto Serif SC", serif';
+        ctx.fillText('一封来自哥哥的礼物', W / 2, 345);
+        ctx.fillText('分别在 12 岁与 18 岁开启', W / 2, 368);
+
+        // 引语卡片
+        ctx.fillStyle = 'rgba(245,240,232,0.04)';
+        ctx.strokeStyle = 'rgba(212,165,116,0.2)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(60, 395, W - 120, 80, 10);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(212,165,116,0.8)';
+        ctx.font = '400 14px "Ma Shan Zheng", "Noto Serif SC", cursive';
+        ctx.fillText('"这是天生的，不需要你证明什么"', W / 2, 430);
+        ctx.fillStyle = 'rgba(245,240,232,0.35)';
+        ctx.font = '400 11px "Noto Serif SC", serif';
+        ctx.fillText('— 哥哥 · 2026年夏', W / 2, 455);
+
+        // 底部装饰
+        ctx.strokeStyle = 'rgba(212,165,116,0.2)';
+        ctx.beginPath();
+        ctx.moveTo(60, H - 80);
+        ctx.lineTo(W - 60, H - 80);
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(245,240,232,0.25)';
+        ctx.font = '400 11px "Noto Serif SC", serif';
+        ctx.fillText('📅 写信日期：2026年8月25日（农历七月十三）', W / 2, H - 55);
+        ctx.fillText('⏳ 解封日期：2032年8月18日（农历七月十三）', W / 2, H - 35);
+
+        // 底部 logo
+        ctx.fillStyle = 'rgba(245,166,35,0.6)';
+        ctx.font = '600 11px "Noto Serif SC", serif';
+        ctx.fillText('时光胶囊 · 哥哥写给弟弟的信', W / 2, H - 10);
+
+        // 显示遮罩
+        document.getElementById('shareOverlay').classList.add('active');
+    }
+
+    function closeShareOverlay() {
+        document.getElementById('shareOverlay').classList.remove('active');
+    }
+
     // 暴露给 HTML 内联 onclick 调用
     window.toggleMusic = toggleMusic;
     window.tryUnlock = tryUnlock;
