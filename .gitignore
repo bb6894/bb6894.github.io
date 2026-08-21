@@ -1,6 +1,9 @@
 # Local tools and generated verification artifacts
 .mimosa/
 .playwright-cli/
+.belt/
+.omo/
+.omx/
 .zcode/
 node_modules/
 output/

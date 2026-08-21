@@ -1,3 +1,11 @@
+@font-face {
+    font-family: "Ma Shan Zheng";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("fonts/ma-shan-zheng-signature.woff2") format("woff2");
+}
+
 :root {
     color-scheme: dark;
     --background: #090910;
@@ -11,11 +19,18 @@
     --gold: #d8aa73;
     --amber: #f5a623;
     --purple: #9b67d2;
+    --signature-purple: #9b59b6;
+    --sun-orange: #f4b860;
+    --sky-blue: #78c8e8;
+    --night-violet: #8276c9;
+    --deep-ocean: #18213d;
+    --cool-paper: #eef0f6;
     --green: #4db779;
     --border: rgba(216, 170, 115, 0.24);
     --shadow: 0 26px 80px rgba(0, 0, 0, 0.42);
     --serif: "Songti SC", "STSong", "Noto Serif CJK SC", Georgia, serif;
-    --display: "Kaiti SC", "STKaiti", "KaiTi", var(--serif);
+    --handwritten: "STXingkai", "华文行楷", "FZXingKai-S04S", "Kaiti SC", "STKaiti", "KaiTi", var(--serif);
+    --display: var(--handwritten);
 }
 
 * {
@@ -54,7 +69,9 @@ button {
 }
 
 button:focus-visible,
-a:focus-visible {
+a:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
     outline: 3px solid rgba(245, 166, 35, 0.72);
     outline-offset: 3px;
 }
@@ -84,6 +101,19 @@ img {
     border-bottom: 1px solid var(--border);
     background: rgba(9, 9, 16, 0.84);
     backdrop-filter: blur(18px);
+}
+
+.preview-banner {
+    position: relative;
+    z-index: 15;
+    padding: 9px 18px;
+    border-bottom: 1px solid rgba(245, 166, 35, 0.36);
+    background: linear-gradient(90deg, rgba(245, 166, 35, 0.2), rgba(155, 103, 210, 0.18));
+    color: #ffe0ad;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: center;
 }
 
 .brand {
@@ -191,6 +221,24 @@ img {
     font-size: clamp(1rem, 2vw, 1.18rem);
 }
 
+.audience-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 22px auto 0;
+    padding: 8px 14px;
+    border: 1px solid rgba(120, 200, 232, 0.2);
+    border-radius: 999px;
+    background: rgba(120, 200, 232, 0.06);
+    color: rgba(245, 239, 230, 0.66);
+    font-size: 0.82rem;
+}
+
+.audience-note span {
+    color: var(--sky-blue);
+    font-weight: 700;
+}
+
 .current-time {
     margin: 24px 0 0;
     color: rgba(245, 239, 230, 0.44);
@@ -258,13 +306,46 @@ img {
 }
 
 .letter-card {
-    overflow: hidden;
+    --letter-accent: var(--gold);
+    --letter-accent-soft: rgba(216, 170, 115, 0.14);
+    --letter-paper: var(--paper);
+    --letter-ink: var(--ink);
+    --letter-strong: #6b472d;
+    --letter-header-start: #fbf7f0;
+    --letter-header-end: #eee4d7;
+    --ceremony-glow: rgba(216, 170, 115, 0.2);
+    position: relative;
+    overflow: clip;
     margin-top: 40px;
     border: 1px solid rgba(216, 170, 115, 0.28);
     border-radius: 26px;
-    background: var(--paper);
-    color: var(--ink);
+    background: var(--letter-paper);
+    color: var(--letter-ink);
     box-shadow: var(--shadow);
+}
+
+.letter-card-12 {
+    --letter-accent: #d98226;
+    --letter-accent-soft: rgba(244, 184, 96, 0.2);
+    --letter-paper: #fff8e9;
+    --letter-ink: #3c3028;
+    --letter-strong: #99591d;
+    --letter-header-start: #fff8e9;
+    --letter-header-end: #edf7f7;
+    --ceremony-glow: rgba(244, 184, 96, 0.24);
+    border-color: rgba(244, 184, 96, 0.42);
+}
+
+.letter-card-18 {
+    --letter-accent: var(--night-violet);
+    --letter-accent-soft: rgba(130, 118, 201, 0.16);
+    --letter-paper: var(--cool-paper);
+    --letter-ink: #283047;
+    --letter-strong: #51468f;
+    --letter-header-start: #202a49;
+    --letter-header-end: #151b31;
+    --ceremony-glow: rgba(130, 118, 201, 0.28);
+    border-color: rgba(130, 118, 201, 0.42);
 }
 
 .letter-header {
@@ -275,8 +356,17 @@ img {
     padding: clamp(22px, 4vw, 34px);
     border-bottom: 1px solid rgba(48, 42, 42, 0.1);
     background:
-        radial-gradient(circle at top left, rgba(245, 166, 35, 0.12), transparent 38%),
-        linear-gradient(135deg, #fbf7f0, #eee4d7);
+        radial-gradient(circle at top left, var(--letter-accent-soft), transparent 38%),
+        linear-gradient(135deg, var(--letter-header-start), var(--letter-header-end));
+}
+
+.letter-card-18 .letter-header {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+    color: #f3f3f8;
+}
+
+.letter-card-18 .letter-kicker {
+    color: #afa7ee;
 }
 
 .letter-heading {
@@ -296,6 +386,16 @@ img {
     line-height: 0.9;
 }
 
+.letter-card-12 .letter-age {
+    background: linear-gradient(145deg, var(--sun-orange), #df7d24 52%, var(--sky-blue));
+    background-clip: text;
+}
+
+.letter-card-18 .letter-age {
+    background: linear-gradient(145deg, #d3cff9, var(--night-violet) 58%, #5e70ae);
+    background-clip: text;
+}
+
 .letter-age-future {
     filter: saturate(0.7);
 }
@@ -310,6 +410,10 @@ img {
     margin: 6px 0 0;
     color: rgba(48, 42, 42, 0.58);
     font-size: 0.82rem;
+}
+
+.letter-card-18 .letter-heading p:last-child {
+    color: rgba(243, 243, 248, 0.56);
 }
 
 .letter-status {
@@ -337,7 +441,68 @@ img {
     padding: clamp(24px, 5vw, 52px);
     background:
         repeating-linear-gradient(transparent, transparent 34px, rgba(48, 42, 42, 0.045) 35px),
-        var(--paper);
+        var(--letter-paper);
+}
+
+.reading-progress {
+    position: sticky;
+    top: 72px;
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: -18px 0 34px;
+    padding: 9px 12px;
+    border: 1px solid color-mix(in srgb, var(--letter-accent) 22%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--letter-paper) 90%, transparent);
+    box-shadow: 0 8px 24px rgba(20, 20, 30, 0.08);
+    backdrop-filter: blur(12px);
+}
+
+.reading-progress-meter {
+    --progress-color: var(--letter-accent);
+    flex: 1;
+    height: 4px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 999px;
+    appearance: none;
+    background: color-mix(in srgb, var(--letter-accent) 14%, transparent);
+}
+
+.reading-progress-meter::-webkit-progress-bar {
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--letter-accent) 14%, transparent);
+}
+
+.reading-progress-meter::-webkit-progress-value {
+    border-radius: 999px;
+    background: var(--progress-color);
+    transition: width 120ms linear;
+}
+
+.reading-progress-meter::-moz-progress-bar {
+    border-radius: 999px;
+    background: var(--progress-color);
+}
+
+.letter-card-12 .reading-progress-meter {
+    --progress-color: linear-gradient(90deg, var(--sun-orange), var(--sky-blue));
+}
+
+.letter-card-18 .reading-progress-meter {
+    --progress-color: linear-gradient(90deg, #6f80bd, var(--night-violet));
+}
+
+.reading-progress-label {
+    flex: none;
+    min-width: 58px;
+    color: color-mix(in srgb, var(--letter-ink) 68%, transparent);
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 0.72rem;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
 }
 
 .photo-section {
@@ -381,6 +546,12 @@ img {
     transition: transform 300ms ease, filter 300ms ease;
 }
 
+.photo-item picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
 .photo-item span {
     position: absolute;
     inset: auto 0 0;
@@ -399,32 +570,283 @@ img {
 .letter-content {
     position: relative;
     z-index: 1;
-    font-family: var(--display);
+    font-family: var(--serif);
     font-size: clamp(1rem, 2vw, 1.12rem);
     line-height: 2.05;
 }
 
 .letter-content p {
-    margin: 0 0 1.15em;
+    margin: 0 0 1.3em;
 }
 
 .letter-content strong {
-    color: #6b472d;
+    color: var(--letter-strong);
+}
+
+.letter-chapter {
+    position: relative;
+    margin: 0 0 clamp(38px, 7vw, 64px);
+    padding-top: 4px;
+}
+
+.letter-chapter:not(.letter-introduction)::before {
+    content: "";
+    display: block;
+    width: 44px;
+    height: 2px;
+    margin-bottom: 18px;
+    background: linear-gradient(90deg, var(--letter-accent), transparent);
+}
+
+.letter-chapter h3 {
+    margin: 0 0 16px;
+    color: var(--letter-strong);
+    font-family: var(--display);
+    font-size: clamp(1.18rem, 3vw, 1.48rem);
+    letter-spacing: 0.06em;
+}
+
+.letter-card-12 .letter-chapter h3 {
+    background: linear-gradient(100deg, #cf6f1d, #dc8b2f 52%, #4299b9);
+    background-clip: text;
+    color: transparent;
+}
+
+.letter-card-18 .letter-chapter h3 {
+    background: linear-gradient(100deg, #40517f, #6659a8 58%, #8276c9);
+    background-clip: text;
+    color: transparent;
+}
+
+.letter-introduction > p:first-child {
+    font-size: 1.16em;
+}
+
+.letter-closing {
+    margin-bottom: 0;
 }
 
 .letter-signature {
     margin-top: 36px !important;
+    background: linear-gradient(90deg, var(--amber), var(--signature-purple));
+    background-clip: text;
+    color: transparent;
     text-align: right;
-    font-size: 1.22rem;
+    font-family: "Ma Shan Zheng", var(--handwritten);
+    font-size: clamp(1.25rem, 3.4vw, 1.52rem);
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    line-height: 1.5;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .letter-signature span {
-    color: rgba(48, 42, 42, 0.58);
-    font-size: 0.84rem;
+    color: inherit;
+    font-size: 1em;
+    -webkit-text-fill-color: transparent;
 }
 
 .letter-card-locked {
     background: linear-gradient(150deg, #eee7dc, #dcd1c4);
+}
+
+.opening-ceremony {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    min-height: 100dvh;
+    padding: 40px 24px;
+    background:
+        radial-gradient(circle at 50% 42%, var(--ceremony-glow), transparent 34%),
+        rgba(7, 7, 14, 0.92);
+    color: var(--cream);
+    text-align: center;
+    backdrop-filter: blur(9px);
+}
+
+.opening-ceremony.is-playing {
+    animation: ceremony-backdrop 4.6s ease both;
+}
+
+.opening-ceremony p {
+    margin: 30px 0 0;
+    background: linear-gradient(90deg, var(--sun-orange), #e7c9ae 48%, #afa7ee);
+    background-clip: text;
+    color: transparent;
+    font-family: var(--display);
+    font-size: clamp(1.15rem, 3vw, 1.55rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    opacity: 0;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.opening-ceremony.is-playing p {
+    animation: ceremony-message 4.6s ease both;
+}
+
+.ceremony-stage {
+    position: relative;
+    width: 210px;
+    height: 162px;
+    perspective: 900px;
+}
+
+.opening-ceremony.is-playing .ceremony-stage {
+    animation: ceremony-stage 4.6s cubic-bezier(0.22, 0.7, 0.28, 1) both;
+}
+
+.ceremony-envelope {
+    position: absolute;
+    left: 10px;
+    bottom: 0;
+    width: 190px;
+    height: 118px;
+    border: 1px solid rgba(48, 42, 42, 0.15);
+    border-radius: 8px 8px 13px 13px;
+    background:
+        linear-gradient(32deg, transparent 49%, rgba(255, 255, 255, 0.52) 50%) left / 50% 100% no-repeat,
+        linear-gradient(-32deg, transparent 49%, rgba(0, 0, 0, 0.06) 50%) right / 50% 100% no-repeat,
+        #e7d7be;
+    box-shadow: 0 18px 38px rgba(33, 27, 29, 0.18);
+}
+
+.ceremony-flap {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 76px;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    background: #d4c09f;
+    transform-origin: top;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+}
+
+.opening-ceremony.is-playing .ceremony-flap {
+    animation: ceremony-flap 4.6s ease both;
+}
+
+.ceremony-paper {
+    position: absolute;
+    left: 25px;
+    bottom: 12px;
+    width: 140px;
+    height: 96px;
+    border-radius: 5px 5px 2px 2px;
+    background:
+        linear-gradient(var(--letter-accent-soft), var(--letter-accent-soft)) 22px 26px / 76px 2px no-repeat,
+        linear-gradient(rgba(48, 42, 42, 0.1), rgba(48, 42, 42, 0.1)) 22px 40px / 96px 2px no-repeat,
+        linear-gradient(rgba(48, 42, 42, 0.08), rgba(48, 42, 42, 0.08)) 22px 54px / 82px 2px no-repeat,
+        var(--letter-paper);
+    box-shadow: 0 12px 28px rgba(30, 26, 32, 0.16);
+    opacity: 0;
+}
+
+.opening-ceremony.is-playing .ceremony-paper {
+    animation: ceremony-paper 4.6s cubic-bezier(0.2, 0.72, 0.28, 1) both;
+}
+
+.ceremony-seal {
+    position: absolute;
+    left: 76px;
+    top: 66px;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    border: 3px double rgba(255, 232, 208, 0.55);
+    border-radius: 50%;
+    background: radial-gradient(circle, #b85357, #742d32);
+    box-shadow: 0 8px 18px rgba(76, 31, 37, 0.28);
+    color: #f4d9c3;
+    font-family: var(--display);
+    font-size: 1.55rem;
+    transform: rotate(-8deg);
+}
+
+.ceremony-seal::before,
+.ceremony-seal::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 27px;
+    width: 2px;
+    height: 50px;
+    background: rgba(78, 28, 33, 0.8);
+    opacity: 0;
+}
+
+.ceremony-seal::after {
+    transform: rotate(56deg);
+}
+
+.opening-ceremony.is-playing .ceremony-seal {
+    animation: ceremony-seal 4.6s ease both;
+}
+
+.opening-ceremony.is-playing .ceremony-seal::before,
+.opening-ceremony.is-playing .ceremony-seal::after {
+    animation: ceremony-crack 4.6s ease both;
+}
+
+@keyframes ceremony-seal {
+    0%, 8% { opacity: 1; filter: blur(0); transform: rotate(-8deg) scale(1); }
+    12% { transform: rotate(-11deg) scale(1.04); }
+    16% { transform: rotate(-5deg) scale(1.06); }
+    21% { opacity: 1; filter: blur(0); transform: rotate(-8deg) scale(0.98); }
+    27%, 100% { opacity: 0; filter: blur(1px); transform: translateY(4px) rotate(-2deg) scale(0.82); }
+}
+
+@keyframes ceremony-crack {
+    0%, 11% { opacity: 0; }
+    15%, 22% { opacity: 1; }
+    27%, 100% { opacity: 0; }
+}
+
+@keyframes ceremony-flap {
+    0%, 18% { transform: rotateX(0deg); }
+    42%, 100% { transform: rotateX(178deg); }
+}
+
+@keyframes ceremony-paper {
+    0%, 36% { opacity: 0; transform: translateY(28px) scale(0.94); }
+    44% { opacity: 1; }
+    66% { opacity: 1; transform: translateY(-58px) scale(1.04); }
+    92% { opacity: 1; transform: translateY(-64px) scale(1.08); }
+    100% { opacity: 0; transform: translateY(-72px) scale(1.16); }
+}
+
+@keyframes ceremony-message {
+    0%, 58% { opacity: 0; transform: translateY(8px); }
+    66%, 93% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-5px); }
+}
+
+@keyframes ceremony-backdrop {
+    0% { opacity: 0; }
+    4%, 94% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+@keyframes ceremony-stage {
+    0%, 93% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-16px) scale(1.08); }
+}
+
+.letter-card.is-opening .letter-body {
+    animation: letter-body-reveal 4.6s cubic-bezier(0.22, 0.72, 0.28, 1) both;
+}
+
+@keyframes letter-body-reveal {
+    0%, 89% { opacity: 0; filter: blur(2px); transform: translateY(20px); }
+    96% { opacity: 0.45; }
+    100% { opacity: 1; filter: blur(0); transform: translateY(0); }
 }
 
 .sealed-letter {
@@ -473,6 +895,102 @@ img {
 .primary-button,
 .secondary-button {
     padding: 10px 20px;
+}
+
+.reply-section {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(28px, 6vw, 72px);
+    width: min(900px, calc(100% - 32px));
+    margin: 0 auto 96px;
+    padding: clamp(28px, 5vw, 52px);
+    border: 1px solid rgba(120, 200, 232, 0.2);
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at top left, rgba(120, 200, 232, 0.1), transparent 36%),
+        linear-gradient(145deg, rgba(27, 29, 47, 0.94), rgba(14, 15, 25, 0.96));
+    box-shadow: var(--shadow);
+}
+
+.reply-intro h2 {
+    margin: 0;
+    background: linear-gradient(100deg, var(--sun-orange), var(--sky-blue) 48%, #afa7ee);
+    background-clip: text;
+    color: transparent;
+    font-family: var(--display);
+    font-size: clamp(2rem, 5vw, 3.15rem);
+    line-height: 1.2;
+}
+
+.reply-intro > p:last-child {
+    margin: 22px 0 0;
+    color: var(--muted);
+    line-height: 1.85;
+}
+
+.reply-form {
+    display: grid;
+    gap: 10px;
+}
+
+.reply-form label {
+    margin-top: 4px;
+    color: rgba(245, 239, 230, 0.78);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+.reply-form select,
+.reply-form textarea {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--cream);
+    font: inherit;
+}
+
+.reply-form select {
+    min-height: 46px;
+    padding: 0 13px;
+}
+
+.reply-form option {
+    background: var(--surface-strong);
+}
+
+.reply-form textarea {
+    min-height: 136px;
+    padding: 14px;
+    resize: vertical;
+    line-height: 1.75;
+}
+
+.reply-form textarea::placeholder {
+    color: rgba(245, 239, 230, 0.34);
+}
+
+.reply-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: rgba(245, 239, 230, 0.42);
+    font-size: 0.75rem;
+}
+
+.reply-actions {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr 1fr;
+    gap: 9px;
+    margin-top: 8px;
+}
+
+.reply-privacy {
+    margin: 6px 0 0;
+    color: rgba(245, 239, 230, 0.42);
+    font-size: 0.74rem;
+    line-height: 1.7;
 }
 
 .primary-button {
@@ -734,6 +1252,14 @@ img {
     .share-actions {
         grid-template-columns: 1fr;
     }
+
+    .reply-section {
+        grid-template-columns: 1fr;
+    }
+
+    .reply-actions {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 480px) {
@@ -761,6 +1287,13 @@ img {
         letter-spacing: 0.04em;
     }
 
+    .audience-note {
+        align-items: flex-start;
+        border-radius: 16px;
+        line-height: 1.55;
+        text-align: left;
+    }
+
     .letters {
         width: min(100% - 20px, 900px);
     }
@@ -771,6 +1304,28 @@ img {
 
     .letter-status {
         margin-left: 68px;
+    }
+
+    .letter-body {
+        padding: 24px 18px 38px;
+    }
+
+    .reading-progress {
+        top: 64px;
+        margin: -10px 0 34px;
+    }
+
+    .letter-content {
+        font-size: 1.03rem;
+        line-height: 1.95;
+    }
+
+    .letter-content p {
+        margin-bottom: 1.45em;
+    }
+
+    .letter-chapter {
+        margin-bottom: 50px;
     }
 
     .photo-item,
@@ -790,6 +1345,12 @@ img {
     .lightbox-nav {
         width: 40px;
     }
+
+    .reply-section {
+        width: min(100% - 20px, 900px);
+        margin-bottom: 72px;
+        padding: 28px 20px;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -804,5 +1365,13 @@ img {
 
     .background-canvas {
         display: none;
+    }
+
+    .opening-ceremony {
+        display: none !important;
+    }
+
+    .reading-progress-meter::-webkit-progress-value {
+        transition: none;
     }
 }

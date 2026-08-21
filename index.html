@@ -36,11 +36,16 @@
         </div>
     </header>
 
+    <div class="preview-banner" id="previewBanner" role="status" hidden>
+        本地验收模式：12 岁与 18 岁信件已临时解封，线上生日规则不受影响。
+    </div>
+
     <main id="top">
         <section class="hero">
             <p class="eyebrow">写于 2026 年夏</p>
             <h1 id="heroTitle">给未来的你</h1>
             <p class="hero-copy">一封来自哥哥的礼物，记录十二岁的此刻，等待十八岁的你亲手开启。</p>
+            <p class="audience-note"><span>家庭纪念页</span>这封信写给弟弟，也欢迎家人和朋友一起见证。</p>
             <p class="current-time" id="currentTime" aria-live="polite">正在读取当前时间…</p>
 
             <div class="countdown" role="group" aria-labelledby="countdownTitle">
@@ -68,7 +73,7 @@
         </section>
 
         <section class="letters" aria-label="时光信件">
-            <article class="letter-card letter-card-locked" id="letter12">
+            <article class="letter-card letter-card-12 letter-card-locked" id="letter12">
                 <header class="letter-header">
                     <div class="letter-heading">
                         <span class="letter-age">12</span>
@@ -81,6 +86,17 @@
                     <span class="letter-status letter-status-locked" id="letter12Status">封印中</span>
                 </header>
 
+                <div class="opening-ceremony" id="letter12Ceremony" aria-live="polite" hidden>
+                    <div class="ceremony-stage" aria-hidden="true">
+                        <span class="ceremony-seal">封</span>
+                        <span class="ceremony-envelope">
+                            <span class="ceremony-flap"></span>
+                            <span class="ceremony-paper"></span>
+                        </span>
+                    </div>
+                    <p>生日快乐，这封信现在为你打开。</p>
+                </div>
+
                 <div class="sealed-letter" id="letter12Locked">
                     <div class="seal-mark" aria-hidden="true">封</div>
                     <p class="sealed-eyebrow">第一封信尚未开启</p>
@@ -89,6 +105,10 @@
                 </div>
 
                 <div class="letter-body" id="letter12Body" hidden>
+                    <div class="reading-progress" id="letter12Progress">
+                        <progress class="reading-progress-meter" id="letter12ProgressFill" aria-label="第一封信阅读进度" max="100" value="0">0%</progress>
+                        <span class="reading-progress-label" id="letter12ProgressLabel">阅读 0%</span>
+                    </div>
                     <section class="photo-section" aria-labelledby="photoTitle">
                         <div class="section-heading">
                             <p class="letter-kicker">成长瞬间</p>
@@ -96,56 +116,104 @@
                         </div>
                         <div class="photo-grid" id="photoGrid">
                             <button class="photo-item" type="button" data-caption="小时候">
-                                <img src="1787238756709_d.jpg" alt="七岁时的你，笑得很开心" loading="lazy" decoding="async">
+                                <picture>
+                                    <source srcset="1787238756709_d.avif" type="image/avif">
+                                    <source srcset="1787238756709_d.webp" type="image/webp">
+                                    <img data-photo src="1787238756709_d.jpg" alt="七岁时的你，笑得很开心" width="800" height="360" loading="lazy" decoding="async">
+                                </picture>
                                 <span>小时候</span>
                             </button>
                             <button class="photo-item" type="button" data-caption="童年">
-                                <img src="1787238831642_d.jpg" alt="童年的回忆" loading="lazy" decoding="async">
+                                <picture>
+                                    <source srcset="1787238831642_d.avif" type="image/avif">
+                                    <source srcset="1787238831642_d.webp" type="image/webp">
+                                    <img data-photo src="1787238831642_d.jpg" alt="童年的回忆" width="800" height="1066" loading="lazy" decoding="async">
+                                </picture>
                                 <span>童年</span>
                             </button>
                             <button class="photo-item" type="button" data-caption="玩耍">
-                                <img src="1787239180717_d.jpg" alt="和朋友们一起玩耍" loading="lazy" decoding="async">
+                                <picture>
+                                    <source srcset="1787239180717_d.avif" type="image/avif">
+                                    <source srcset="1787239180717_d.webp" type="image/webp">
+                                    <img data-photo src="1787239180717_d.jpg" alt="和朋友们一起玩耍" width="800" height="1066" loading="lazy" decoding="async">
+                                </picture>
                                 <span>玩耍</span>
                             </button>
                             <button class="photo-item" type="button" data-caption="笑脸">
-                                <img src="1787239252000_d.jpg" alt="灿烂的笑脸" loading="lazy" decoding="async">
+                                <picture>
+                                    <source srcset="1787239252000_d.avif" type="image/avif">
+                                    <source srcset="1787239252000_d.webp" type="image/webp">
+                                    <img data-photo src="1787239252000_d.jpg" alt="灿烂的笑脸" width="800" height="1757" loading="lazy" decoding="async">
+                                </picture>
                                 <span>笑脸</span>
                             </button>
                             <button class="photo-item" type="button" data-caption="成长">
-                                <img src="1787239308278_d.jpg" alt="成长路上的足迹" loading="lazy" decoding="async">
+                                <picture>
+                                    <source srcset="1787239308278_d.avif" type="image/avif">
+                                    <source srcset="1787239308278_d.webp" type="image/webp">
+                                    <img data-photo src="1787239308278_d.jpg" alt="成长路上的足迹" width="800" height="1422" loading="lazy" decoding="async">
+                                </picture>
                                 <span>成长</span>
                             </button>
                             <button class="photo-item" type="button" data-caption="快乐">
-                                <img src="1787239579111_d.jpg" alt="无忧无虑的快乐时光" loading="lazy" decoding="async">
+                                <picture>
+                                    <source srcset="1787239579111_d.avif" type="image/avif">
+                                    <source srcset="1787239579111_d.webp" type="image/webp">
+                                    <img data-photo src="1787239579111_d.jpg" alt="无忧无虑的快乐时光" width="800" height="360" loading="lazy" decoding="async">
+                                </picture>
                                 <span>快乐</span>
                             </button>
                             <button class="photo-item" type="button" data-caption="回忆">
-                                <img src="1787239630260_d.jpg" alt="珍贵的童年回忆" loading="lazy" decoding="async">
+                                <picture>
+                                    <source srcset="1787239630260_d.avif" type="image/avif">
+                                    <source srcset="1787239630260_d.webp" type="image/webp">
+                                    <img data-photo src="1787239630260_d.jpg" alt="珍贵的童年回忆" width="800" height="1066" loading="lazy" decoding="async">
+                                </picture>
                                 <span>回忆</span>
                             </button>
                             <button class="photo-item" type="button" data-caption="儿时">
-                                <img src="1787239642585_d.jpg" alt="两岁时拍的照片" loading="lazy" decoding="async">
+                                <picture>
+                                    <source srcset="1787239642585_d.avif" type="image/avif">
+                                    <source srcset="1787239642585_d.webp" type="image/webp">
+                                    <img data-photo src="1787239642585_d.jpg" alt="两岁时拍的照片" width="800" height="1066" loading="lazy" decoding="async">
+                                </picture>
                                 <span>儿时</span>
                             </button>
                         </div>
                     </section>
 
                     <div class="letter-content">
-                        <p>亲爱的弟弟：</p>
-                        <p>今天是你12岁的生日。12岁，是一个有趣的年纪——你不再是小孩，但也还没成为大人。你在两者之间，有着最珍贵的自由。</p>
-                        <p>我想告诉你几件事：</p>
-                        <p><strong>第一，保持你的好奇心。</strong>你小时候总有问不完的“为什么”，我希望你永远不要丢掉这份特质。世界很大，未知很多，而你是那个带着问题前行的人。</p>
-                        <p><strong>第二，享受现在的每一刻。</strong>12岁的快乐很简单——一顿好吃的、一场游戏、一次和朋友出门。这些看似平凡的时刻，将来都会变成你最珍贵的回忆。</p>
-                        <p><strong>第三，不要太着急长大。</strong>我知道你经常羡慕大人的自由，但大人的世界也有它的沉重。趁现在，多笑、多玩、多尝试。</p>
-                        <p><strong>第四，记得家人。</strong>爸妈一直在你身边，我有时候可能会忙，但永远是你最坚实的后盾。</p>
-                        <p>生日快乐，我的弟弟。愿你的12岁，充满阳光和笑声。</p>
-                        <p>等6年后你18岁，再来读另一封信吧。那时你会明白我今天说的话。不知道那时候的你，会喜欢什么、害怕什么——我很期待知道那个答案。</p>
-                        <p class="letter-signature">爱你的哥哥<br><span>2026年夏</span></p>
+                        <section class="letter-chapter letter-introduction">
+                            <p>亲爱的弟弟：</p>
+                            <p>今天是你12岁的生日。12岁，是一个有趣的年纪——你不再是小孩，但也还没成为大人。你在两者之间，有着最珍贵的自由。</p>
+                            <p>我想告诉你几件事：</p>
+                        </section>
+                        <section class="letter-chapter">
+                            <h3>保持好奇</h3>
+                            <p><strong>第一，保持你的好奇心。</strong>你小时候总有问不完的“为什么”，我希望你永远不要丢掉这份特质。世界很大，未知很多，而你是那个带着问题前行的人。</p>
+                        </section>
+                        <section class="letter-chapter">
+                            <h3>享受此刻</h3>
+                            <p><strong>第二，享受现在的每一刻。</strong>12岁的快乐很简单——一顿好吃的、一场游戏、一次和朋友出门。这些看似平凡的时刻，将来都会变成你最珍贵的回忆。</p>
+                        </section>
+                        <section class="letter-chapter">
+                            <h3>慢慢长大</h3>
+                            <p><strong>第三，不要太着急长大。</strong>我知道你经常羡慕大人的自由，但大人的世界也有它的沉重。趁现在，多笑、多玩、多尝试。</p>
+                        </section>
+                        <section class="letter-chapter">
+                            <h3>记得家人</h3>
+                            <p><strong>第四，记得家人。</strong>爸妈一直在你身边，我有时候可能会忙，但永远是你最坚实的后盾。</p>
+                        </section>
+                        <section class="letter-chapter letter-closing">
+                            <p>生日快乐，我的弟弟。愿你的12岁，充满阳光和笑声。</p>
+                            <p>等6年后你18岁，再来读另一封信吧。那时你会明白我今天说的话。不知道那时候的你，会喜欢什么、害怕什么——我很期待知道那个答案。</p>
+                            <p class="letter-signature">爱你的哥哥 <span>· 2026年夏</span></p>
+                        </section>
                     </div>
                 </div>
             </article>
 
-            <article class="letter-card letter-card-locked" id="letter18">
+            <article class="letter-card letter-card-18 letter-card-locked" id="letter18">
                 <header class="letter-header">
                     <div class="letter-heading">
                         <span class="letter-age letter-age-future">18</span>
@@ -157,6 +225,16 @@
                     </div>
                     <span class="letter-status letter-status-locked" id="letter18Status">封印中</span>
                 </header>
+                <div class="opening-ceremony" id="letter18Ceremony" aria-live="polite" hidden>
+                    <div class="ceremony-stage" aria-hidden="true">
+                        <span class="ceremony-seal">封</span>
+                        <span class="ceremony-envelope">
+                            <span class="ceremony-flap"></span>
+                            <span class="ceremony-paper"></span>
+                        </span>
+                    </div>
+                    <p>这封信已经等了你 6 年。</p>
+                </div>
                 <div class="sealed-letter" id="letter18Locked">
                     <div class="seal-mark" aria-hidden="true">封</div>
                     <p class="sealed-eyebrow">未来的信尚未开启</p>
@@ -165,23 +243,71 @@
                     <button class="primary-button" id="verifyUnlockButton" type="button">查看封印状态</button>
                 </div>
                 <div class="letter-body" id="letter18Body" hidden>
+                    <div class="reading-progress" id="letter18Progress">
+                        <progress class="reading-progress-meter" id="letter18ProgressFill" aria-label="第二封信阅读进度" max="100" value="0">0%</progress>
+                        <span class="reading-progress-label" id="letter18ProgressLabel">阅读 0%</span>
+                    </div>
                     <div class="letter-content">
-                        <p>亲爱的弟弟：</p>
-                        <p>当你展开这封信的时候，你正好18岁了。恭喜你，成年了！</p>
-                        <p>18岁，是成人礼，也是法律意义上的成年。但我不想只跟你讲这些大道理，我更想认真地对你说一句——<strong>生日快乐</strong>。</p>
-                        <p>这六年里，你会从一个总爱问“为什么”的少年，慢慢长成有自己想法、能独立思考、愿意为喜欢的事情投入热情的大人。无论那时的你是什么样子，我都为你一路走到这里感到骄傲。</p>
-                        <p>关于选择，我有三个建议：</p>
-                        <p><strong>第一，选择让你愿意长期学下去的事情，</strong>而不只是听起来最赚钱或最体面的事情。</p>
-                        <p><strong>第二，保护好你的好奇心。</strong>擅长可以慢慢练习，但真正想弄明白一件事的冲动很珍贵。</p>
-                        <p><strong>第三，如果两个方向看起来差不多，</strong>可以试着选择那个让你有一点害怕、又有一点兴奋的方向。</p>
-                        <p>人生不是一条只能向前的轨道，更像一片可以探索的旷野。你可以绕路，可以回头，也可以在途中改变方向。十八岁做出的选择很重要，但它不会成为对你一生的最终判决。</p>
-                        <p><strong>无论你怎么选择，我都会支持你。</strong>因为你是我弟弟，这是天生的，不需要你证明什么。</p>
-                        <p>最后，记得给爸妈一个拥抱。他们看着你长大，比你想象的还要骄傲。</p>
-                        <p>祝你18岁生日快乐，勇敢地做出属于自己的选择。</p>
-                        <p class="letter-signature">爱你的哥哥<br><span>2026年夏 · 写于你12岁时</span></p>
+                        <section class="letter-chapter letter-introduction">
+                            <p>亲爱的弟弟：</p>
+                            <p>当你展开这封信的时候，你正好18岁了。恭喜你，成年了！</p>
+                            <p>18岁，是成人礼，也是法律意义上的成年。但我不想只跟你讲这些大道理，我更想认真地对你说一句——<strong>生日快乐</strong>。</p>
+                        </section>
+                        <section class="letter-chapter">
+                            <h3>六年之后</h3>
+                            <p>这六年里，你会从一个总爱问“为什么”的少年，慢慢长成有自己想法、能独立思考、愿意为喜欢的事情投入热情的大人。无论那时的你是什么样子，我都为你一路走到这里感到骄傲。</p>
+                        </section>
+                        <section class="letter-chapter">
+                            <h3>关于选择</h3>
+                            <p>关于选择，我有三个建议：</p>
+                            <p><strong>第一，选择让你愿意长期学下去的事情，</strong>而不只是听起来最赚钱或最体面的事情。</p>
+                            <p><strong>第二，保护好你的好奇心。</strong>擅长可以慢慢练习，但真正想弄明白一件事的冲动很珍贵。</p>
+                            <p><strong>第三，如果两个方向看起来差不多，</strong>可以试着选择那个让你有一点害怕、又有一点兴奋的方向。</p>
+                        </section>
+                        <section class="letter-chapter">
+                            <h3>人生不是轨道</h3>
+                            <p>人生不是一条只能向前的轨道，更像一片可以探索的旷野。你可以绕路，可以回头，也可以在途中改变方向。十八岁做出的选择很重要，但它不会成为对你一生的最终判决。</p>
+                        </section>
+                        <section class="letter-chapter">
+                            <h3>你的后盾</h3>
+                            <p><strong>无论你怎么选择，我都会支持你。</strong>因为你是我弟弟，这是天生的，不需要你证明什么。</p>
+                            <p>最后，记得给爸妈一个拥抱。他们看着你长大，比你想象的还要骄傲。</p>
+                        </section>
+                        <section class="letter-chapter letter-closing">
+                            <p>祝你18岁生日快乐，勇敢地做出属于自己的选择。</p>
+                            <p class="letter-signature">爱你的哥哥 <span>· 2026年夏 · 写于你12岁时</span></p>
+                        </section>
                     </div>
                 </div>
             </article>
+        </section>
+
+        <section class="reply-section" id="replySection" aria-labelledby="replyTitle" hidden>
+            <div class="reply-intro">
+                <p class="eyebrow">读完之后</p>
+                <h2 id="replyTitle">写一句话给未来的哥哥</h2>
+                <p>弟弟可以回应这封信，家人和朋友也可以留下此刻的祝福。这里不会形成公开留言墙。</p>
+            </div>
+            <form class="reply-form" id="replyForm">
+                <label for="replyIdentity">你的身份</label>
+                <select id="replyIdentity" name="identity">
+                    <option value="弟弟本人">弟弟本人</option>
+                    <option value="家人">家人</option>
+                    <option value="朋友">朋友</option>
+                </select>
+                <label for="replyMessage">想留下的话</label>
+                <textarea id="replyMessage" name="message" rows="5" maxlength="180" placeholder="例如：今天读到这里，我最想告诉你的是……"></textarea>
+                <div class="reply-meta">
+                    <span id="replySaveStatus" role="status" aria-live="polite">尚未保存</span>
+                    <span id="replyCharacterCount">0 / 180</span>
+                </div>
+                <div class="reply-actions">
+                    <button class="primary-button" type="submit">保存在这里</button>
+                    <button class="secondary-button" id="copyReplyButton" type="button">复制这句话</button>
+                    <button class="secondary-button" id="downloadReplyButton" type="button">下载留念</button>
+                </div>
+                <p class="reply-privacy">留言只保存在当前设备，不会上传或公开。需要交给哥哥时，可以复制或下载后发送给他。</p>
+            </form>
         </section>
     </main>
 

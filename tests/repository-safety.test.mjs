@@ -16,6 +16,9 @@ test('未来信草稿和本地实验文件不会被意外提交', () => {
         '圆锁信.html',
         'output/',
         '.playwright-cli/',
+        '.belt/',
+        '.omo/',
+        '.omx/',
     ]) {
         assert.match(rules, new RegExp(`^${pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'm'));
     }

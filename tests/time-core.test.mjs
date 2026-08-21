@@ -29,6 +29,15 @@ test('两个生日边界都使用明确的中国标准时间', async () => {
     assert.equal(getUnlockState(unlockAt + 1), 'unlocked');
 });
 
+test('全部解封预览只允许在本地地址显式开启', async () => {
+    const { isLocalUnlockPreview } = await loadTimeCore();
+
+    assert.equal(isLocalUnlockPreview({ hostname: 'localhost', search: '?preview=unlocked' }), true);
+    assert.equal(isLocalUnlockPreview({ hostname: '127.0.0.1', search: '?preview=unlocked' }), true);
+    assert.equal(isLocalUnlockPreview({ hostname: 'bb6894.github.io', search: '?preview=unlocked' }), false);
+    assert.equal(isLocalUnlockPreview({ hostname: 'localhost', search: '' }), false);
+});
+
 test('倒计时不会产生负数并在边界前精确到秒', async () => {
     const { DATE_CONFIG, getCountdownParts } = await loadTimeCore();
     const unlockAt = Date.parse(DATE_CONFIG.unlockAt18);

@@ -7,6 +7,7 @@ const SECOND_MS = 1_000;
 const MINUTE_MS = 60 * SECOND_MS;
 const HOUR_MS = 60 * MINUTE_MS;
 const DAY_MS = 24 * HOUR_MS;
+const LOCAL_PREVIEW_HOSTS = new Set(['localhost', '127.0.0.1', '::1']);
 
 function getDateState(target, now) {
     return now >= Date.parse(target) ? 'unlocked' : 'locked';
@@ -14,6 +15,11 @@ function getDateState(target, now) {
 
 export function getBirthday12State(now = Date.now()) {
     return getDateState(DATE_CONFIG.birthday12, now);
+}
+
+export function isLocalUnlockPreview({ hostname = '', search = '' } = {}) {
+    const params = new URLSearchParams(search);
+    return LOCAL_PREVIEW_HOSTS.has(hostname) && params.get('preview') === 'unlocked';
 }
 
 export function getUnlockState(now = Date.now()) {

@@ -5,6 +5,7 @@ import { test } from 'node:test';
 const indexPath = new URL('../index.html', import.meta.url);
 const html = readFileSync(indexPath, 'utf8');
 const app = readFileSync(new URL('../assets/app.js', import.meta.url), 'utf8');
+const styles = readFileSync(new URL('../assets/styles.css', import.meta.url), 'utf8');
 
 function count(pattern) {
     return [...html.matchAll(pattern)].length;
@@ -32,12 +33,63 @@ test('样式和业务脚本外置且不使用内联事件处理器', () => {
 });
 
 test('两封信都有明确的封印态与公开态内容', () => {
+    assert.match(html, /id="previewBanner"[^>]*hidden/);
     assert.match(html, /id="letter12Locked"/);
     assert.match(html, /id="letter12Body"[^>]*hidden/);
     assert.match(html, /id="letter18Locked"/);
     assert.match(html, /id="letter18Body"[^>]*hidden/);
     assert.match(html, /当你展开这封信的时候/);
     assert.match(html, /关于选择，我有三个建议/);
+});
+
+test('开信仪式、阅读进度和等待六年的提示都已建立', () => {
+    assert.equal(count(/class="opening-ceremony"/g), 2);
+    assert.equal(count(/<progress\b/g), 2);
+    assert.match(html, /这封信已经等了你 6 年/);
+    assert.match(app, /prefers-reduced-motion: reduce/);
+    assert.match(styles, /opening-ceremony/);
+    assert.match(styles, /@keyframes letter-body-reveal/);
+    assert.match(styles, /ceremony-backdrop 4\.6s/);
+    assert.match(styles, /letter-body-reveal 4\.6s/);
+    assert.match(app, /const OPENING_CEREMONY_MS = 4_600/);
+    assert.match(app, /}, OPENING_CEREMONY_MS\);/);
+    assert.match(styles, /\.letter-card\s*\{[\s\S]*?overflow:\s*clip/);
+});
+
+test('落款使用本地马善政手写字体和参考渐变', () => {
+    assert.match(styles, /font-family:\s*"Ma Shan Zheng"/);
+    assert.match(styles, /ma-shan-zheng-signature\.woff2/);
+    assert.match(styles, /\.letter-signature\s*\{[\s\S]*?linear-gradient\(90deg,\s*var\(--amber\),\s*var\(--signature-purple\)\)/);
+    assert.equal(existsSync(new URL('../assets/fonts/ma-shan-zheng-signature.woff2', import.meta.url)), true);
+});
+
+test('回应入口适合弟弟和亲友且不会伪装成公开提交', () => {
+    assert.match(html, /id="replyForm"/);
+    assert.match(html, /id="replyIdentity"/);
+    assert.match(html, /id="replyMessage"/);
+    assert.match(html, /只保存在当前设备/);
+    assert.match(app, /localStorage/);
+    assert.doesNotMatch(app, /fetch\s*\(/);
+});
+
+test('成长照片提供现代格式、尺寸和兼容回退', () => {
+    assert.equal(count(/<picture>/g), 8);
+    assert.equal(count(/type="image\/avif"/g), 8);
+    assert.equal(count(/type="image\/webp"/g), 8);
+
+    const imageTags = [...html.matchAll(/<img\b[^>]*data-photo[^>]*>/gi)].map((match) => match[0]);
+    assert.equal(imageTags.length, 8);
+    for (const image of imageTags) {
+        assert.match(image, /loading="lazy"/);
+        assert.match(image, /decoding="async"/);
+        assert.match(image, /width="800"/);
+        assert.match(image, /height="\d+"/);
+    }
+
+    const modernSources = [...html.matchAll(/srcset="([^"]+\.(?:avif|webp))"/gi)].map((match) => match[1]);
+    for (const source of modernSources) {
+        assert.equal(existsSync(new URL(`../${source}`, import.meta.url)), true, `${source} 应存在`);
+    }
 });
 
 test('静态页面不依赖未配置的可信解锁接口', () => {
