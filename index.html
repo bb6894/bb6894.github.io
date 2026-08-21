@@ -1435,6 +1435,7 @@
         DOM.lightbox.addEventListener('click', e => {
             if (e.target.id === 'lightbox') closeLightbox();
         });
+        let _tSX=0;document.addEventListener('touchstart',e=>{if(!DOM.lightbox||!DOM.lightbox.classList.contains('active'))return;_tSX=e.changedTouches[0].screenX},{passive:true});document.addEventListener('touchend',e=>{if(!DOM.lightbox||!DOM.lightbox.classList.contains('active'))return;const d=_tSX-e.changedTouches[0].screenX;if(Math.abs(d)>50&&typeof navLightbox==='function')navLightbox(d>0?1:-1)},{passive:true});
         
         // 显示提示
         function showTip(text) {
