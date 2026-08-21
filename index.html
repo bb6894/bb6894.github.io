@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="时光胶囊 — 哥哥写给弟弟的一封信，封存于2026年夏，在12岁与18岁两个时刻开启。">
+    <meta property="og:title" content="时光胶囊 | 给未来的你">
+    <meta property="og:description" content="一封来自哥哥的礼物，封存于2026年夏，分别在12岁与18岁开启。">
+    <meta property="og:type" content="website">
     <title>时光胶囊 | 给未来的你</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏳</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -825,14 +830,14 @@
                 <div class="photo-gallery">
                     <h4 style="text-align:center; margin-bottom:20px; color:#888; font-size:0.9rem;">成长瞬间</h4>
                     <div class="photos-grid">
-                        <div class="photo-item"><img src="1787238756709_d.jpg" alt="照片1" loading="lazy" decoding="async"><div class="photo-caption">小时候</div></div>
-                        <div class="photo-item"><img src="1787238831642_d.jpg" alt="照片2" loading="lazy" decoding="async"><div class="photo-caption">童年</div></div>
-                        <div class="photo-item"><img src="1787239180717_d.jpg" alt="照片3" loading="lazy" decoding="async"><div class="photo-caption">玩耍</div></div>
-                        <div class="photo-item"><img src="1787239252000_d.jpg" alt="照片4" loading="lazy" decoding="async"><div class="photo-caption">笑脸</div></div>
-                        <div class="photo-item"><img src="1787239308278_d.jpg" alt="照片5" loading="lazy" decoding="async"><div class="photo-caption">成长</div></div>
-                        <div class="photo-item"><img src="1787239579111_d.jpg" alt="照片6" loading="lazy" decoding="async"><div class="photo-caption">快乐</div></div>
-                        <div class="photo-item"><img src="1787239630260_d.jpg" alt="照片7" loading="lazy" decoding="async"><div class="photo-caption">回忆</div></div>
-                        <div class="photo-item"><img src="1787239642585_d.jpg" alt="照片8" loading="lazy" decoding="async"><div class="photo-caption">两岁</div></div>
+                        <div class="photo-item"><img src="1787238756709_d.jpg" alt="七岁时的你，笑得很开心" loading="lazy" decoding="async"><div class="photo-caption">小时候</div></div>
+                        <div class="photo-item"><img src="1787238831642_d.jpg" alt="童年的回忆" loading="lazy" decoding="async"><div class="photo-caption">童年</div></div>
+                        <div class="photo-item"><img src="1787239180717_d.jpg" alt="和朋友们一起玩耍" loading="lazy" decoding="async"><div class="photo-caption">玩耍</div></div>
+                        <div class="photo-item"><img src="1787239252000_d.jpg" alt="灿烂的笑脸" loading="lazy" decoding="async"><div class="photo-caption">笑脸</div></div>
+                        <div class="photo-item"><img src="1787239308278_d.jpg" alt="成长路上的足迹" loading="lazy" decoding="async"><div class="photo-caption">成长</div></div>
+                        <div class="photo-item"><img src="1787239579111_d.jpg" alt="无忧无虑的快乐时光" loading="lazy" decoding="async"><div class="photo-caption">快乐</div></div>
+                        <div class="photo-item"><img src="1787239630260_d.jpg" alt="珍贵的童年回忆" loading="lazy" decoding="async"><div class="photo-caption">回忆</div></div>
+                        <div class="photo-item"><img src="1787239642585_d.jpg" alt="两岁时拍的照片" loading="lazy" decoding="async"><div class="photo-caption">两岁</div></div>
                     </div>
                 </div>
                 
@@ -886,20 +891,49 @@
         </p>
     </footer>
     
-    <script>
+    <script>(function() {
+    'use strict';
+
         // ==================== 时间计算 ====================
         
-        // 目标日期：弟弟18岁生日（2032年农历七月十三 = 公历2032年8月18日）
-        const TARGET_DATE = new Date('2032-08-18T00:00:00');
+        // 所有日期统一维护在此处，修改只需改这一处
+        const DATE_CONFIG = {
+            // 写信日期
+            writeDate:      new Date('2026-08-25T00:00:00'),
+            // 弟弟生日（农历七月十三 = 公历）
+            birthday:       new Date('2026-08-18T00:00:00'),
+            // 18岁解锁目标
+            unlockTarget:   new Date('2032-08-18T00:00:00'),
+        };
         
-        // 写信日期：2026年农历七月十三 = 公历2026年8月25日
-        const WRITE_DATE = new Date('2026-08-25T00:00:00');
-        
-        // 弟弟12岁生日：2026年农历七月十三 = 公历2026年8月18日
-        const BIRTHDAY_12 = new Date('2026-08-18T00:00:00');
-        
-        // 弟弟18岁生日：2032年农历七月十三 = 公历2032年8月18日
-        const BIRTHDAY_18 = new Date('2032-08-18T00:00:00');
+        const TARGET_DATE  = DATE_CONFIG.unlockTarget;
+        const WRITE_DATE   = DATE_CONFIG.writeDate;
+        const BIRTHDAY_12  = DATE_CONFIG.birthday;
+        const BIRTHDAY_18  = DATE_CONFIG.birthday;
+
+        // ==================== 配置常量 ====================
+        const CONFIG = {
+            PARTICLE_COUNT:       60,
+            PARTICLE_MIN_SPEED_Y: 0.1,
+            PARTICLE_MAX_SPEED_Y: 0.3,
+            PARTICLE_MAX_SPEED_X: 0.2,
+            PARTICLE_CONNECT_DIST: 100,
+            CONFETTI_COUNT:       80,
+            CONFETTI_LIFETIME:    4000,
+            MUSIC_VOLUME:         0.3,
+            COUNTDOWN_INTERVAL:   1000,
+        };
+        // 别名兼容
+        const PARTICLE_COUNT        = CONFIG.PARTICLE_COUNT;
+        const PARTICLE_MIN_SPEED_Y  = CONFIG.PARTICLE_MIN_SPEED_Y;
+        const PARTICLE_MAX_SPEED_Y  = CONFIG.PARTICLE_MAX_SPEED_Y;
+        const PARTICLE_MAX_SPEED_X  = CONFIG.PARTICLE_MAX_SPEED_X;
+        const PARTICLE_CONNECT_DIST = CONFIG.PARTICLE_CONNECT_DIST;
+        const CONFETTI_COUNT        = CONFIG.CONFETTI_COUNT;
+        const CONFETTI_LIFETIME     = CONFIG.CONFETTI_LIFETIME;
+        const MUSIC_VOLUME          = CONFIG.MUSIC_VOLUME;
+        const COUNTDOWN_INTERVAL    = CONFIG.COUNTDOWN_INTERVAL;
+
         
         // 更新当前时间显示
         function updateCurrentTime() {
@@ -919,7 +953,8 @@
             // 检查是否是弟弟的生日
             const month = now.getMonth() + 1;
             const day = now.getDate();
-            if (month === 8 && day === 18) {
+            // 弟弟生日：每年8月18日
+            if (month === DATE_CONFIG.birthday.getMonth() + 1 && day === DATE_CONFIG.birthday.getDate()) {
                 const age = now.getFullYear() - BIRTHDAY_12.getFullYear();
                 document.getElementById('birthdayReminder').innerHTML = `🎂 今天是你的${age}岁生日！`;
             } else {
@@ -1012,8 +1047,9 @@
             document.getElementById('sealOverlay').classList.remove('active');
         }
         
-        // 解锁18岁信件
+        // 解锁18岁信件（带错误边界）
         function unlockLetter18() {
+            try {
             const card = document.getElementById('letter18');
             const badge = document.getElementById('age18badge');
             
@@ -1070,13 +1106,17 @@
                 
                 createConfetti();
             }, 1200);
+            } catch(e) {
+                console.error('解锁信件异常:', e);
+                showTip('打开信件时出了点问题，请稍后再试');
+            }
         }
         
         // 创建纸屑
         function createConfetti() {
             const colors = ['#f5a623', '#9b59b6', '#d4a574', '#e8c9a0', '#f5f0e8'];
             
-            for (let i = 0; i < 80; i++) {
+            for (let i = 0; i < CONFETTI_COUNT; i++) {
                 setTimeout(() => {
                     const piece = document.createElement('div');
                     piece.style.cssText = `
@@ -1092,7 +1132,7 @@
                         animation: fall ${Math.random() * 2 + 2}s linear forwards;
                     `;
                     document.body.appendChild(piece);
-                    setTimeout(() => piece.remove(), 4000);
+                    setTimeout(() => piece.remove(), CONFETTI_LIFETIME);
                 }, i * 30);
             }
         }
@@ -1110,7 +1150,7 @@
             window.addEventListener('resize', resize);
             
             const particles = [];
-            const count = 60;
+            const PARTICLE_COUNT = 60;
             
             class Particle {
                 constructor() {
@@ -1121,8 +1161,8 @@
                     this.x = Math.random() * canvas.width;
                     this.y = Math.random() * canvas.height;
                     this.size = Math.random() * 2 + 0.5;
-                    this.speedY = -Math.random() * 0.3 - 0.1;
-                    this.speedX = (Math.random() - 0.5) * 0.2;
+                    this.speedY = -Math.random() * PARTICLE_MAX_SPEED_Y - PARTICLE_MIN_SPEED_Y;
+                    this.speedX = (Math.random() - 0.5) * PARTICLE_MAX_SPEED_X;
                     this.opacity = Math.random() * 0.4 + 0.1;
                     this.color = Math.random() > 0.5 ? '#f5a623' : '#9b59b6';
                 }
@@ -1146,7 +1186,7 @@
                 }
             }
             
-            for (let i = 0; i < count; i++) {
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
                 particles.push(new Particle());
             }
             
@@ -1166,7 +1206,7 @@
                         const dy = particles[i].y - particles[j].y;
                         const dist = Math.sqrt(dx * dx + dy * dy);
                         
-                        if (dist < 100) {
+                        if (dist < PARTICLE_CONNECT_DIST) {
                             ctx.strokeStyle = `rgba(212, 165, 116, ${0.15 * (1 - dist / 100)})`;
                             ctx.lineWidth = 1;
                             ctx.beginPath();
@@ -1183,16 +1223,20 @@
         }
         
         // 初始化
-        updateCurrentTime();
-        updateCountdown();
-        initCanvas();
-        initLightbox();
+        // 错误边界：关键初始化函数，崩溃不影响页面主体
+        function safeInit() {
+            try { updateCurrentTime(); } catch(e) { console.error('时间初始化失败:', e); }
+            try { updateCountdown(); } catch(e) { console.error('倒计时初始化失败:', e); }
+            try { initCanvas(); } catch(e) { console.error('Canvas初始化失败:', e); }
+            try { initLightbox(); } catch(e) { console.error('灯箱初始化失败:', e); }
+        }
+        safeInit();
         
         // 音乐控制
         const bgMusic = document.getElementById('bgMusic');
         const musicControl = document.getElementById('musicControl');
         bgMusic.preload = 'metadata';
-        bgMusic.volume = 0.3;
+        bgMusic.volume = MUSIC_VOLUME;
 
         bgMusic.addEventListener('error', (e) => {
             console.error('音频加载失败:', e);
@@ -1306,14 +1350,24 @@
         `;
         document.head.appendChild(style);
 
-        setInterval(updateCurrentTime, 1000);
-        setInterval(updateCountdown, 1000);
+        setInterval(updateCurrentTime, COUNTDOWN_INTERVAL);
+        setInterval(updateCountdown, COUNTDOWN_INTERVAL);
         
         // 检查URL参数
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('unlocked') && new Date() >= TARGET_DATE) {
             unlockLetter18();
         }
-    </script>
+}
+    // 暴露给 HTML 内联 onclick 调用
+    window.toggleMusic = toggleMusic;
+    window.tryUnlock = tryUnlock;
+    window.showSeal = showSeal;
+    window.closeSeal = closeSeal;
+    window.unlockLetter18 = unlockLetter18;
+    window.openLightbox = openLightbox;
+    window.closeLightbox = closeLightbox;
+    window.navLightbox = navLightbox;
+})();</script>
 </body>
 </html>
