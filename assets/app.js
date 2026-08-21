@@ -105,12 +105,23 @@ function closeDialog(dialog) {
     dialog.removeAttribute('open');
 }
 
-function showToast(message) {
+function showToast(message, tone = 'notice') {
     window.clearTimeout(toastTimer);
     dom.toast.textContent = message;
+    dom.toast.dataset.tone = tone;
     dom.toast.classList.add('toast-visible');
+    if (typeof dom.toast.showPopover === 'function' && !dom.toast.matches(':popover-open')) {
+        try {
+            dom.toast.showPopover();
+        } catch {
+            dom.toast.removeAttribute('popover');
+        }
+    }
     toastTimer = window.setTimeout(() => {
         dom.toast.classList.remove('toast-visible');
+        if (typeof dom.toast.hidePopover === 'function' && dom.toast.matches(':popover-open')) {
+            dom.toast.hidePopover();
+        }
     }, 2600);
 }
 
@@ -496,7 +507,7 @@ async function shareWithSystem() {
 async function copyCanonicalLink() {
     try {
         await navigator.clipboard.writeText(CANONICAL_URL);
-        showToast('链接已复制');
+        showToast('链接已复制', 'success');
     } catch {
         const textArea = document.createElement('textarea');
         textArea.value = CANONICAL_URL;
@@ -507,7 +518,10 @@ async function copyCanonicalLink() {
         textArea.select();
         const copied = document.execCommand('copy');
         textArea.remove();
-        showToast(copied ? '链接已复制' : `请手动复制：${CANONICAL_URL}`);
+        showToast(
+            copied ? '链接已复制' : `请手动复制：${CANONICAL_URL}`,
+            copied ? 'success' : 'notice',
+        );
     }
 }
 
@@ -619,7 +633,7 @@ function saveReply(event) {
             savedAt: new Date().toISOString(),
         }));
         updateReplyMeta(true);
-        showToast('已经保存在这台设备上');
+        showToast('已经保存在这台设备上', 'success');
     } catch {
         showToast('浏览器无法保存，请改用复制或下载');
     }
@@ -632,7 +646,11 @@ async function copyReply() {
         dom.replyMessage.focus();
         return;
     }
-    showToast(await copyText(reply) ? '这句话已复制' : '复制失败，请长按文字手动复制');
+    const copied = await copyText(reply);
+    showToast(
+        copied ? '这句话已复制' : '复制失败，请长按文字手动复制',
+        copied ? 'success' : 'notice',
+    );
 }
 
 function downloadReply() {

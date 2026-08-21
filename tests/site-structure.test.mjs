@@ -69,7 +69,17 @@ test('回应入口适合弟弟和亲友且不会伪装成公开提交', () => {
     assert.match(html, /id="replyMessage"/);
     assert.match(html, /只保存在当前设备/);
     assert.match(app, /localStorage/);
+    assert.match(app, /dom\.replySection\.hidden = !\(birthday12Unlocked \|\| birthday18Unlocked\)/);
     assert.doesNotMatch(app, /fetch\s*\(/);
+});
+
+test('全局操作反馈固定在屏幕顶部并可显示在弹窗之上', () => {
+    assert.match(html, /<div[^>]*id="toast"[^>]*popover="manual"/);
+    assert.match(styles, /\.toast\s*\{[\s\S]*?top:\s*calc\(env\(safe-area-inset-top,\s*0px\) \+ 16px\)/);
+    assert.match(styles, /\.toast\s*\{[\s\S]*?left:\s*50%/);
+    assert.doesNotMatch(styles, /\.toast\s*\{[\s\S]*?bottom:\s*22px/);
+    assert.match(app, /dom\.toast\.showPopover\(\)/);
+    assert.match(app, /showToast\('链接已复制', 'success'\)/);
 });
 
 test('成长照片提供现代格式、尺寸和兼容回退', () => {
