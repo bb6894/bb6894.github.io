@@ -415,20 +415,138 @@
             flex-direction: column;
             gap: 30px;
         }
-        
+
         .seal-overlay.active {
             display: flex;
             animation: fadeIn 0.5s;
         }
-        
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
-        
+
         .seal-icon {
             font-size: 8rem;
             animation: pulse 1.5s infinite;
+        }
+
+        /* 照片灯箱 */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .lightbox.active {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+        .lightbox img {
+            max-width: 90vw;
+            max-height: 80vh;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            object-fit: contain;
+        }
+        .lightbox-caption {
+            color: rgba(245,240,232,0.7);
+            margin-top: 15px;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            color: rgba(245,240,232,0.6);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.2s;
+            line-height: 1;
+        }
+        .lightbox-close:hover { color: #fff; }
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(245,240,232,0.7);
+            font-size: 3rem;
+            cursor: pointer;
+            padding: 10px 15px;
+            transition: color 0.2s;
+            user-select: none;
+        }
+        .lightbox-nav:hover { color: #fff; }
+        .lightbox-prev { left: 15px; }
+        .lightbox-next { right: 15px; }
+        .lightbox-counter {
+            color: rgba(245,240,232,0.4);
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+
+        /* 印章效果 */
+        .stamp {
+            position: absolute;
+            top: 18px;
+            right: 22px;
+            width: 72px;
+            height: 72px;
+            border: 2.5px solid rgba(180, 40, 40, 0.55);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transform: rotate(-12deg);
+            opacity: 0.75;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .stamp-inner {
+            color: rgba(180, 40, 40, 0.7);
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 0.72rem;
+            text-align: center;
+            line-height: 1.3;
+            letter-spacing: 1px;
+        }
+        .stamp-ring {
+            position: absolute;
+            inset: 4px;
+            border: 1px dashed rgba(180, 40, 40, 0.35);
+            border-radius: 50%;
+        }
+
+        /* 滚动引导 */
+        .scroll-hint {
+            text-align: center;
+            margin-top: 18px;
+            animation: bounce 2s infinite;
+        }
+        .scroll-hint span {
+            display: block;
+            color: rgba(245,240,232,0.35);
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            margin-bottom: 4px;
+        }
+        .scroll-arrow {
+            display: inline-block;
+            color: rgba(212,165,116,0.45);
+            font-size: 1.2rem;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(6px); }
         }
         
         @keyframes pulse {
@@ -593,14 +711,17 @@
     </audio>
     
     <!-- 音乐控制按钮 -->
-    <div class="music-control" id="musicControl" onclick="toggleMusic()">
-        <div class="music-icon">🎵</div>
-        <div class="music-bars">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
+    <div style="position:fixed;bottom:30px;right:30px;z-index:1000;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div class="music-control" id="musicControl" onclick="toggleMusic()" style="position:static;">
+            <div class="music-icon">🎵</div>
+            <div class="music-bars">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
         </div>
+        <span style="color:rgba(212,165,116,0.45);font-size:0.65rem;letter-spacing:1px;margin-top:2px;">Kiss The Rain</span>
     </div>
     
     <!-- 背景Canvas -->
@@ -612,6 +733,16 @@
         <div class="seal-text">此信已封印</div>
         <div class="seal-subtext">请等待 2032 年 8 月，属于你的时刻</div>
         <button class="seal-close" onclick="closeSeal()">返回</button>
+    </div>
+
+    <!-- 照片灯箱 -->
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close" onclick="closeLightbox()">×</span>
+        <span class="lightbox-nav lightbox-prev" onclick="navLightbox(-1)">‹</span>
+        <span class="lightbox-nav lightbox-next" onclick="navLightbox(1)">›</span>
+        <img id="lightboxImg" src="" alt="">
+        <div class="lightbox-caption" id="lightboxCaption"></div>
+        <div class="lightbox-counter" id="lightboxCounter"></div>
     </div>
     
     <!-- 导航 -->
@@ -687,6 +818,7 @@
                     </div>
                 </div>
                 <span class="letter-status open">✅ 已解锁</span>
+                <div class="stamp"><div class="stamp-ring"></div><div class="stamp-inner">二〇二六<br>夏·封</div></div>
             </div>
             <div class="letter-body">
                 <!-- 照片墙 -->
@@ -713,7 +845,7 @@
                     <p><strong>第三，不要太着急长大。</strong> 我知道你经常羡慕大人的自由，但大人的世界也有它的沉重。趁现在，多笑、多玩、多尝试。</p>
                     <p><strong>第四，记得家人。</strong> 爸妈一直在你身边，我有时候可能会忙，但永远是你最坚实的后盾。</p>
                     <p>生日快乐，我的弟弟。愿你的12岁，充满阳光和笑声。</p>
-                    <p>等6年后你18岁，再来读另一封信吧。那时你会明白我今天说的话。</p>
+                    <p>等6年后你18岁，再来读另一封信吧。那时你会明白我今天说的话。不知道那时候的你，会喜欢什么、害怕什么——我很期待知道那个答案。</p>
                 </div>
                 <div class="letter-signature">爱你的哥哥 · 2026年夏</div>
             </div>
@@ -739,6 +871,10 @@
                 <p style="color: #999; font-size: 1rem; margin-bottom: 10px;">解封日期：<strong style="color: var(--gold);">2032 年 8 月 18 日</strong>（农历七月十三）</p>
                 <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 30px;">届时你将年满18岁，成年快乐</p>
                 <button class="unlock-btn" onclick="tryUnlock()">尝试解锁</button>
+                <div class="scroll-hint" style="margin-top:25px;">
+                    <span>向下滚动查看信件</span>
+                    <span class="scroll-arrow">↓</span>
+                </div>
             </div>
         </div>
     </div>
@@ -1050,6 +1186,7 @@
         updateCurrentTime();
         updateCountdown();
         initCanvas();
+        initLightbox();
         
         // 音乐控制
         const bgMusic = document.getElementById('bgMusic');
@@ -1067,7 +1204,6 @@
                 const playPromise = bgMusic.play();
                 if (playPromise !== undefined) {
                     playPromise.catch(e => {
-                        console.log('播放被阻止:', e);
                         showTip('请点击图标播放音乐');
                     });
                 }
@@ -1079,6 +1215,61 @@
                 musicControl.querySelector('.music-icon').textContent = '🔇';
             }
         }
+
+        // ===== 照片灯箱 =====
+        let lightboxIndex = 0;
+        const photos = [];
+        const photoCaptions = [];
+
+        function initLightbox() {
+            const items = document.querySelectorAll('.photo-item');
+            items.forEach((item, i) => {
+                const img = item.querySelector('img');
+                const caption = item.querySelector('.photo-caption');
+                photos.push(img.src);
+                photoCaptions.push(caption ? caption.textContent : '');
+                item.addEventListener('click', () => openLightbox(i));
+            });
+        }
+
+        function openLightbox(index) {
+            lightboxIndex = index;
+            updateLightbox();
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function navLightbox(dir) {
+            lightboxIndex = (lightboxIndex + dir + photos.length) % photos.length;
+            updateLightbox();
+        }
+
+        function updateLightbox() {
+            const img = document.getElementById('lightboxImg');
+            const caption = document.getElementById('lightboxCaption');
+            const counter = document.getElementById('lightboxCounter');
+            img.src = photos[lightboxIndex];
+            img.alt = photoCaptions[lightboxIndex];
+            caption.textContent = photoCaptions[lightboxIndex];
+            counter.textContent = `${lightboxIndex + 1} / ${photos.length}`;
+        }
+
+        document.addEventListener('keydown', e => {
+            const lb = document.getElementById('lightbox');
+            if (!lb.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') navLightbox(-1);
+            if (e.key === 'ArrowRight') navLightbox(1);
+        });
+
+        document.getElementById('lightbox').addEventListener('click', e => {
+            if (e.target.id === 'lightbox') closeLightbox();
+        });
         
         // 显示提示
         function showTip(text) {
