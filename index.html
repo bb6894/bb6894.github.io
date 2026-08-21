@@ -363,6 +363,30 @@
             gap: 12px;
             margin-top: 15px;
         }
+
+        .photo-item {
+            position: relative;
+            height: 160px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            background: linear-gradient(135deg, #f5f0e8, #e8ddd0);
+        }
+
+        .photo-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
         
         .photo-item {
             position: relative;
@@ -635,6 +659,7 @@
             .countdown-number { font-size: 1.8rem; }
             .countdown-item { min-width: 60px; padding: 15px 20px; }
             .photos-grid { grid-template-columns: repeat(2, 1fr); }
+            .photo-item { height: 140px; }
         }
         
         /* 分享按钮 */
