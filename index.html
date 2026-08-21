@@ -3,2023 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="时光胶囊 — 哥哥写给弟弟的一封信，封存于2026年夏，在12岁与18岁两个时刻开启。">
+    <meta name="description" content="时光胶囊——哥哥写给弟弟的一封信，记录12岁的此刻，等待18岁的未来。">
+    <meta name="theme-color" content="#0b0b12">
     <meta property="og:title" content="时光胶囊 | 给未来的你">
-    <meta property="og:description" content="一封来自哥哥的礼物，封存于2026年夏，分别在12岁与18岁开启。">
+    <meta property="og:description" content="哥哥写给弟弟的一封时光胶囊，分别在12岁与18岁开启。">
     <meta property="og:type" content="website">
-    <title>时光胶囊 | 给未来的你</title>
+    <meta property="og:url" content="https://bb6894.github.io/">
+    <link rel="canonical" href="https://bb6894.github.io/">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏳</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --age12: #f5a623;
-            --age18: #9b59b6;
-            --gold: #d4a574;
-            --dark: #0a0a0f;
-            --cream: #f5f0e8;
-            --fire: #ff6b35;
-        }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Noto Serif SC', serif;
-            background: var(--dark);
-            min-height: 100vh;
-            color: var(--cream);
-            overflow-x: hidden;
-        }
-        
-        /* 背景粒子 */
-        .bg-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-        }
-        
-        /* 导航 */
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(10, 10, 15, 0.9);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(212, 165, 116, 0.2);
-        }
-        
-        .logo {
-            font-family: 'Ma Shan Zheng', cursive;
-            font-size: 1.8rem;
-            background: linear-gradient(90deg, var(--age12), var(--age18));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 3px;
-        }
-        
-        /* 英雄区 */
-        .hero {
-            padding: 120px 20px 60px;
-            text-align: center;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .hero h1 {
-            font-family: 'Ma Shan Zheng', cursive;
-            font-size: clamp(2.5rem, 6vw, 4rem);
-            background: linear-gradient(90deg, var(--age12), var(--age18));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
-            text-shadow: 0 0 40px rgba(212, 165, 116, 0.3);
-        }
-        
-        .hero p {
-            color: rgba(245, 240, 232, 0.6);
-            font-size: 1.1rem;
-            line-height: 1.8;
-        }
-        
-        /* 时间显示 */
-        .time-display {
-            margin: 40px 0;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            border: 1px solid rgba(212, 165, 116, 0.2);
-        }
-        
-        .current-time {
-            font-size: 0.9rem;
-            color: rgba(245, 240, 232, 0.5);
-            margin-bottom: 10px;
-        }
-        
-        .birthday-reminder {
-            font-size: 1.2rem;
-            color: var(--gold);
-            margin-top: 10px;
-        }
-        
-        /* 倒计时 */
-        .countdown-container {
-            margin: 40px auto;
-            max-width: 700px;
-        }
-        
-        .countdown-title {
-            font-size: 0.9rem;
-            color: var(--gold);
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .countdown-grid {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .countdown-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(212, 165, 116, 0.2);
-            border-radius: 12px;
-            padding: 20px 25px;
-            min-width: 80px;
-            text-align: center;
-            transition: all 0.3s;
-        }
-        
-        .countdown-item:hover {
-            border-color: var(--gold);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(212, 165, 116, 0.2);
-        }
-        
-        .countdown-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            font-family: monospace;
-            background: linear-gradient(180deg, var(--cream), var(--gold));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1;
-        }
-        
-        .countdown-label {
-            font-size: 0.75rem;
-            color: rgba(245, 240, 232, 0.5);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 8px;
-        }
-        
-        .countdown-divider {
-            font-size: 2rem;
-            color: var(--gold);
-            opacity: 0.5;
-            align-self: flex-start;
-            margin-top: 15px;
-            animation: blink 1s infinite;
-        }
-        
-        @keyframes blink {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 0.1; }
-        }
-        
-        /* 信件容器 */
-        .letters-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 20px 100px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* 信件卡片 */
-        .letter-card {
-            background: var(--cream);
-            border-radius: 16px;
-            overflow: hidden;
-            margin-bottom: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            transition: all 0.5s;
-            position: relative;
-        }
-        
-        .letter-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
-        }
-        
-        /* 翻页效果 */
-        .letter-card.flipping {
-            animation: flipBook 0.8s ease-in-out;
-        }
-        
-        @keyframes flipBook {
-            0% { transform: perspective(1000px) rotateY(0deg); }
-            50% { transform: perspective(1000px) rotateY(-90deg); }
-            100% { transform: perspective(1000px) rotateY(0deg); }
-        }
-        
-        /* 燃烧效果 */
-        .letter-card.burning::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 100%;
-            background: linear-gradient(to top, rgba(255, 107, 53, 0.8), transparent);
-            animation: burn 2s forwards;
-            pointer-events: none;
-        }
-        
-        @keyframes burn {
-            0% { height: 0; opacity: 1; }
-            50% { height: 30%; opacity: 0.8; }
-            100% { height: 100%; opacity: 0; }
-        }
-        
-        .letter-header {
-            background: linear-gradient(135deg, rgba(245, 166, 35, 0.1), rgba(155, 89, 182, 0.1));
-            padding: 25px;
-            border-bottom: 2px solid rgba(212, 165, 116, 0.3);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            position: relative;
-        }
-        
-        .letter-meta {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .letter-age {
-            font-family: 'Ma Shan Zheng', cursive;
-            font-size: 4rem;
-            background: linear-gradient(135deg, var(--age12), var(--age18));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1;
-        }
-        
-        .letter-info h3 {
-            font-size: 1.3rem;
-            color: #2a2a2a;
-            margin-bottom: 5px;
-        }
-        
-        .letter-info .timestamp {
-            font-size: 0.85rem;
-            color: #888;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .letter-status {
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        
-        .letter-status.open {
-            background: rgba(39, 201, 63, 0.1);
-            color: #27c93f;
-            border: 1px solid rgba(39, 201, 63, 0.3);
-        }
-        
-        .letter-status.locked {
-            background: rgba(255, 255, 255, 0.1);
-            color: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(0, 0, 0, 0.2);
-        }
-        
-        .letter-body {
-            padding: 40px 30px;
-            position: relative;
-        }
-        
-        /* 信纸纹理 */
-        .letter-body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: repeating-linear-gradient(
-                transparent,
-                transparent 31px,
-                rgba(0, 0, 0, 0.05) 31px,
-                rgba(0, 0, 0, 0.05) 32px
-            );
-            pointer-events: none;
-        }
-        
-        .letter-content {
-            font-size: 1.05rem;
-            line-height: 2;
-            color: #2a2a2a;
-            text-align: justify;
-            font-family: 'Ma Shan Zheng', cursive;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .letter-content p {
-            margin-bottom: 15px;
-            text-indent: 2em;
-        }
-        
-        .letter-content strong {
-            color: #c45d3e;
-            font-weight: 600;
-        }
-        
-        .letter-signature {
-            margin-top: 30px;
-            text-align: right;
-            font-family: 'Ma Shan Zheng', cursive;
-            font-size: 1.4rem;
-            background: linear-gradient(90deg, var(--age12), var(--age18));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* 照片墙样式 */
-        .photo-gallery {
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(0,0,0,0.02);
-            border-radius: 12px;
-        }
-        
-        .photos-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-top: 15px;
-        }
-
-        .photo-item {
-            position: relative;
-            height: 160px;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-            cursor: pointer;
-            background: linear-gradient(135deg, #f5f0e8, #e8ddd0);
-        }
-
-        .photo-item:hover {
-            transform: scale(1.03);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            z-index: 10;
-        }
-
-        .photo-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-        
-        .photo-item {
-            position: relative;
-            height: 160px;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        
-        .photo-item:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            z-index: 10;
-        }
-        
-        .photo-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        
-        .photo-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-            color: #fff;
-            font-size: 0.75rem;
-            padding: 8px 5px 5px;
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .photo-item:hover .photo-caption {
-            opacity: 1;
-        }
-        
-        /* 封印效果 */
-        .seal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 2000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 30px;
-        }
-
-        .seal-overlay.active {
-            display: flex;
-            animation: fadeIn 0.5s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .seal-icon {
-            font-size: 8rem;
-            animation: pulse 1.5s infinite;
-        }
-
-        /* 照片灯箱 */
-        .lightbox {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.92);
-            z-index: 3000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        .lightbox.active {
-            display: flex;
-            animation: fadeIn 0.3s;
-        }
-        .lightbox img {
-            max-width: 90vw;
-            max-height: 80vh;
-            border-radius: 8px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-            object-fit: contain;
-        }
-        .lightbox-caption {
-            color: rgba(245,240,232,0.7);
-            margin-top: 15px;
-            font-size: 0.95rem;
-            letter-spacing: 1px;
-        }
-        .lightbox-close {
-            position: absolute;
-            top: 20px;
-            right: 25px;
-            color: rgba(245,240,232,0.6);
-            font-size: 2rem;
-            cursor: pointer;
-            transition: color 0.2s;
-            line-height: 1;
-        }
-        .lightbox-close:hover { color: #fff; }
-        .lightbox-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(245,240,232,0.7);
-            font-size: 3rem;
-            cursor: pointer;
-            padding: 10px 15px;
-            transition: color 0.2s;
-            user-select: none;
-        }
-        .lightbox-nav:hover { color: #fff; }
-        .lightbox-prev { left: 15px; }
-        .lightbox-next { right: 15px; }
-        .lightbox-counter {
-            color: rgba(245,240,232,0.4);
-            font-size: 0.8rem;
-            margin-top: 8px;
-        }
-
-        /* 印章效果 */
-        .stamp {
-            position: absolute;
-            top: 18px;
-            right: 22px;
-            width: 72px;
-            height: 72px;
-            border: 2.5px solid rgba(180, 40, 40, 0.55);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            transform: rotate(-12deg);
-            opacity: 0.75;
-            pointer-events: none;
-            z-index: 2;
-        }
-        .stamp-inner {
-            color: rgba(180, 40, 40, 0.7);
-            font-family: 'Ma Shan Zheng', cursive;
-            font-size: 0.72rem;
-            text-align: center;
-            line-height: 1.3;
-            letter-spacing: 1px;
-        }
-        .stamp-ring {
-            position: absolute;
-            inset: 4px;
-            border: 1px dashed rgba(180, 40, 40, 0.35);
-            border-radius: 50%;
-        }
-
-        /* 滚动引导 */
-        .scroll-hint {
-            text-align: center;
-            margin-top: 18px;
-            animation: bounce 2s infinite;
-        }
-        .scroll-hint span {
-            display: block;
-            color: rgba(245,240,232,0.35);
-            font-size: 0.75rem;
-            letter-spacing: 3px;
-            margin-bottom: 4px;
-        }
-        .scroll-arrow {
-            display: inline-block;
-            color: rgba(212,165,116,0.45);
-            font-size: 1.2rem;
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(6px); }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
-        .seal-text {
-            font-size: 1.8rem;
-            color: var(--gold);
-            text-align: center;
-            letter-spacing: 5px;
-        }
-        
-        .seal-subtext {
-            font-size: 1rem;
-            color: rgba(245, 240, 232, 0.5);
-        }
-        
-        .seal-close {
-            margin-top: 30px;
-            padding: 15px 40px;
-            background: transparent;
-            border: 1px solid rgba(212, 165, 116, 0.3);
-            color: var(--gold);
-            border-radius: 30px;
-            cursor: pointer;
-            font-family: 'Noto Serif SC', serif;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-        
-        .seal-close:hover {
-            background: rgba(212, 165, 116, 0.1);
-            transform: scale(1.05);
-        }
-        
-        /* 尝试解锁按钮 */
-        .unlock-btn {
-            margin-top: 30px;
-            padding: 15px 40px;
-            background: rgba(155, 89, 182, 0.2);
-            border: 1px solid rgba(155, 89, 182, 0.4);
-            color: var(--age18);
-            border-radius: 30px;
-            cursor: pointer;
-            font-family: 'Noto Serif SC', serif;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-        
-        .unlock-btn:hover {
-            background: rgba(155, 89, 182, 0.3);
-            transform: scale(1.05);
-        }
-        
-        /* 页脚 */
-        footer {
-            text-align: center;
-            padding: 40px 20px;
-            color: rgba(245, 240, 232, 0.3);
-            font-size: 0.85rem;
-            border-top: 1px solid rgba(212, 165, 116, 0.1);
-            position: relative;
-            z-index: 1;
-        }
-        
-        footer span {
-            background: linear-gradient(90deg, var(--age12), var(--age18));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        /* 响应式 */
-        @media (max-width: 768px) {
-            nav { padding: 15px 20px; }
-            .hero { padding: 100px 20px 40px; }
-            .letter-header { padding: 20px; }
-            .letter-age { font-size: 3rem; }
-            .letter-body { padding: 25px 20px; }
-            .countdown-number { font-size: 1.8rem; }
-            .countdown-item { min-width: 60px; padding: 15px 20px; }
-            .photos-grid { grid-template-columns: repeat(2, 1fr); }
-            .photo-item { height: 140px; }
-        }
-        
-        /* 分享按钮 */
-        .share-btn {
-            position: fixed;
-            bottom: 90px;
-            right: 30px;
-            width: 44px;
-            height: 44px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(212, 165, 116, 0.25);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1000;
-            transition: all 0.3s;
-            backdrop-filter: blur(10px);
-            font-size: 1.2rem;
-        }
-        .share-btn:hover {
-            background: rgba(212, 165, 116, 0.15);
-            transform: scale(1.1);
-        }
-        /* 音乐控制按钮 */
-        .music-control {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(212, 165, 116, 0.3);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1000;
-            transition: all 0.3s;
-            backdrop-filter: blur(10px);
-        }
-        
-        .music-control:hover {
-            background: rgba(212, 165, 116, 0.2);
-            transform: scale(1.1);
-        }
-        
-        .music-icon {
-            font-size: 1.5rem;
-            animation: spin 3s linear infinite;
-        }
-        
-        .music-control.paused .music-icon {
-            animation-play-state: paused;
-            opacity: 0.5;
-        }
-        
-        .music-bars {
-            position: absolute;
-            bottom: 5px;
-            display: flex;
-            gap: 2px;
-            align-items: flex-end;
-            height: 15px;
-        }
-        
-        .music-bars .bar {
-            width: 3px;
-            background: var(--gold);
-            border-radius: 2px;
-            animation: barBounce 1s ease-in-out infinite;
-        }
-        
-        .music-bars .bar:nth-child(1) { animation-delay: 0s; height: 8px; }
-        .music-bars .bar:nth-child(2) { animation-delay: 0.2s; height: 12px; }
-        .music-bars .bar:nth-child(3) { animation-delay: 0.4s; height: 6px; }
-        .music-bars .bar:nth-child(4) { animation-delay: 0.1s; height: 10px; }
-        
-        .music-control.paused .music-bars .bar {
-            animation: none;
-            height: 3px !important;
-            opacity: 0.3;
-        }
-        
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        @keyframes barBounce {
-            0%, 100% { height: 5px; }
-            50% { height: 15px; }
-        }
-    </style>
-    <script>var QRCode=function(){var e=function(e,t){this.mode=t;this.data=e;this.getLength=function(){return e.length}};var t=function(e,t){this.typeNumber=e;this.errorCorrectLevel=t;this.modules=null;this.moduleCount=0;this.dataCache=null;this.dataList=[]};t.prototype.add=function(e){this.dataList.push(e);this.dataCache=null};t.prototype.isDark=function(e,t){if(e<0||this.moduleCount<=e||t<0||this.moduleCount<=t)throw Error(e+","+t);return this.modules[e][t]};t.prototype.getModuleCount=function(){return this.moduleCount};t.prototype.make=function(){this.moduleCount=this.typeNumber*4+17;this.modules=Array(this.moduleCount);for(var e=0;e<this.moduleCount;e++){this.modules[e]=Array(this.moduleCount);for(var t=0;t<this.moduleCount;t++)this.modules[e][t]=null}this.placePattern();this.placeData()};t.prototype.placePattern=function(){for(var e=-1;e<=7;e++)for(var t=-1;t<=7;t++)this.modules[e][t]=this.isPositionPattern(e,t)||this.isPositionPattern(e,this.moduleCount-8+t)||this.isPositionPattern(this.moduleCount-8+e,t)};t.prototype.isPositionPattern=function(e,t){return 0<=e&&e<=6&&0<=t&&t<=6&&(0==e||5==e||0==t||5==t||1<=e&&e<=4&&1<=t&&t<=4)};t.prototype.placeData=function(e){for(var t=this.moduleCount-1,r=7,n=0;n<e.length;n++)for(var o=e[n],s=7;s>=0;s--)this.modules[t][t-1]=1&o>>>s&1};t.prototype.createCanvas=function(e){var t=document.createElement("canvas");t.width=e;t.height=e;var r=t.getContext("2d");r.fillStyle="#fff";r.fillRect(0,0,e,e);r.fillStyle="#000";for(var n=0;n<this.moduleCount;n++)for(var o=0;o<this.moduleCount;o++)if(this.modules[n][o])for(var s=n*e/this.moduleCount,a=o*e/this.moduleCount,c=e/this.moduleCount;r.fillRect(s,a,c,c),s+=c,a+=c);return t};return{Code:t,ErrorCorrectLevel:{L:1,M:0,Q:3,H:2}}}();</script>
-
+    <link rel="stylesheet" href="assets/styles.css">
+    <title>时光胶囊 | 给未来的你</title>
 </head>
 <body>
-    <!-- 背景音乐 - Kiss The Rain -->
-    <audio id="bgMusic" loop preload="metadata">
+    <canvas class="background-canvas" id="backgroundCanvas" aria-hidden="true"></canvas>
+
+    <audio id="backgroundMusic" loop preload="metadata">
         <source src="music.mp3" type="audio/mpeg">
     </audio>
-    
-    <!-- 音乐控制按钮 -->
-    <div style="position:fixed;bottom:30px;right:30px;z-index:1000;display:flex;flex-direction:column;align-items:center;gap:4px;">
-        <div class="music-control paused" id="musicControl" onclick="toggleMusic()" style="position:static;">
-            <div class="music-icon">🔇</div>
-            <div class="music-bars">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </div>
-        </div>
-        <span style="color:rgba(212,165,116,0.45);font-size:0.65rem;letter-spacing:1px;margin-top:2px;">Kiss The Rain</span>
-    </div>
-    
-    <!-- 分享按钮 -->
-    <div class="share-btn" id="shareBtn" onclick="generateShareCard()" title="生成分享卡片">📤</div>
 
-    <!-- 分享结果遮罩 -->
-    <div class="seal-overlay" id="shareOverlay" style="z-index:2500;padding:20px;overflow-y:auto;" onclick="hideShareOverlay()">
-        <div onclick="event.stopPropagation()" style="max-width:400px;margin:0 auto;display:flex;flex-direction:column;gap:16px;">
-            <!-- 海报预览 -->
-            <img id="shareImg" style="width:100%;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5);" alt="时光胶囊分享卡片">
-            
-            <!-- 二维码区域 -->
-            <div style="text-align:center;">
-                <canvas id="qrCanvas" style="border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.3);"></canvas>
-                <p style="color:rgba(245,240,232,0.4);font-size:0.75rem;margin-top:8px;">微信扫码查看</p>
-            </div>
-            
-            <!-- 按钮组 -->
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-                <button onclick="tryWebShare()" style="padding:12px;background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.4);color:#f5a623;border-radius:12px;font-size:0.9rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
-                    📤 系统分享
-                </button>
-                <button onclick="copyLink()" id="copyBtn" style="padding:12px;background:rgba(155,89,182,0.15);border:1px solid rgba(155,89,182,0.4);color:#9b59b6;border-radius:12px;font-size:0.9rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
-                    📋 复制链接
-                </button>
-                <button onclick="downloadShareCard()" style="padding:12px;background:rgba(212,165,116,0.15);border:1px solid rgba(212,165,116,0.4);color:#d4a574;border-radius:12px;font-size:0.9rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
-                    📥 保存海报
-                </button>
-                <button onclick="hideShareOverlay()" style="padding:12px;background:transparent;border:1px solid rgba(245,240,232,0.2);color:rgba(245,240,232,0.5);border-radius:12px;font-size:0.9rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
-                    ✕ 关闭
-                </button>
-            </div>
-            
-            <!-- 链接输入框 -->
-            <div style="display:flex;gap:8px;">
-                <input id="shareLinkInput" readonly style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(212,165,116,0.2);border-radius:8px;color:rgba(245,240,232,0.6);font-size:0.75rem;font-family:monospace;outline:none;">
-            </div>
+    <header class="site-header">
+        <a class="brand" href="#top" aria-label="返回页面顶部">
+            <span class="brand-mark" aria-hidden="true">⌛</span>
+            <span>时光胶囊</span>
+        </a>
+        <div class="header-actions">
+            <span class="age-pill age-pill-locked" id="age12Pill">12岁 · 待开启</span>
+            <span class="age-pill age-pill-locked" id="age18Pill">18岁 · 待开启</span>
+            <button class="icon-button" id="musicButton" type="button" aria-pressed="false" aria-label="播放背景音乐">
+                <span id="musicIcon" aria-hidden="true">🔇</span>
+            </button>
+            <button class="icon-button" id="shareButton" type="button" aria-label="分享时光胶囊">分享</button>
         </div>
-    </div>
+    </header>
 
-    <!-- 背景Canvas -->
-    <canvas class="bg-canvas" id="bgCanvas"></canvas>
-    
-    <!-- 封印遮罩 -->
-    <div class="seal-overlay" id="sealOverlay">
-        <div class="seal-icon">🔒</div>
-        <div class="seal-text">此信已封印</div>
-        <div class="seal-subtext">请等待 2032 年 8 月，属于你的时刻</div>
-        <button class="seal-close" onclick="closeSeal()">返回</button>
-    </div>
+    <main id="top">
+        <section class="hero">
+            <p class="eyebrow">写于 2026 年夏</p>
+            <h1 id="heroTitle">给未来的你</h1>
+            <p class="hero-copy">一封来自哥哥的礼物，记录十二岁的此刻，等待十八岁的你亲手开启。</p>
+            <p class="current-time" id="currentTime" aria-live="polite">正在读取当前时间…</p>
 
-    <!-- 照片灯箱 -->
-    <div class="lightbox" id="lightbox">
-        <span class="lightbox-close" onclick="closeLightbox()">×</span>
-        <span class="lightbox-nav lightbox-prev" onclick="navLightbox(-1)">‹</span>
-        <span class="lightbox-nav lightbox-next" onclick="navLightbox(1)">›</span>
-        <img id="lightboxImg" src="" alt="">
-        <div class="lightbox-caption" id="lightboxCaption"></div>
-        <div class="lightbox-counter" id="lightboxCounter"></div>
-    </div>
-    
-    <!-- 导航 -->
-    <nav>
-        <div class="logo">时光胶囊</div>
-        <div style="display: flex; gap: 15px; font-size: 0.85rem;">
-            <span style="padding: 6px 15px; background: var(--age12); color: #000; border-radius: 15px; font-weight: 600;">12岁 ✓</span>
-            <span style="padding: 6px 15px; background: rgba(255,255,255,0.1); border-radius: 15px; color: rgba(255,255,255,0.5);" id="age18badge">18岁 🔒</span>
-        </div>
-    </nav>
-    
-    <!-- 英雄区 -->
-    <section class="hero">
-        <h1>时光胶囊</h1>
-        <p>一封来自哥哥的礼物<br>封存于 <span id="writeDate">2026年夏</span><br>分为两封信，分别在 12 岁与 18 岁开启</p>
-        
-        <!-- 当前时间显示 -->
-        <div class="time-display">
-            <div class="current-time" id="currentTime">当前时间：加载中...</div>
-            <div class="birthday-reminder" id="birthdayReminder"></div>
-        </div>
-        
-        <!-- 倒计时 -->
-        <div class="countdown-container">
-            <div class="countdown-title">⏳ 距离 18 岁生日还有</div>
-            <div class="countdown-grid">
-                <div class="countdown-item">
-                    <div class="countdown-number" id="years">6</div>
-                    <div class="countdown-label">年</div>
+            <div class="countdown" role="group" aria-labelledby="countdownTitle">
+                <p class="countdown-title" id="countdownTitle">距离 18 岁生日还有</p>
+                <div class="countdown-grid" aria-live="polite">
+                    <div class="countdown-item">
+                        <strong id="days">0</strong>
+                        <span>天</span>
+                    </div>
+                    <div class="countdown-item">
+                        <strong id="hours">0</strong>
+                        <span>时</span>
+                    </div>
+                    <div class="countdown-item">
+                        <strong id="minutes">0</strong>
+                        <span>分</span>
+                    </div>
+                    <div class="countdown-item">
+                        <strong id="seconds">0</strong>
+                        <span>秒</span>
+                    </div>
                 </div>
-                <div class="countdown-divider">:</div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="months">0</div>
-                    <div class="countdown-label">月</div>
-                </div>
-                <div class="countdown-divider">:</div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="days">0</div>
-                    <div class="countdown-label">天</div>
-                </div>
-                <div class="countdown-divider">:</div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="hours">0</div>
-                    <div class="countdown-label">时</div>
-                </div>
-                <div class="countdown-divider">:</div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="minutes">0</div>
-                    <div class="countdown-label">分</div>
-                </div>
-                <div class="countdown-divider">:</div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="seconds">0</div>
-                    <div class="countdown-label">秒</div>
-                </div>
+                <p class="countdown-note">解锁时刻：2032 年 8 月 18 日 00:00（中国标准时间）</p>
             </div>
-        </div>
-    </section>
-    
-    <!-- 信件容器 -->
-    <div class="letters-container">
-        <!-- 12岁信件 -->
-        <div class="letter-card" id="letter12">
-            <div class="letter-header">
-                <div class="letter-meta">
-                    <div class="letter-age">12</div>
-                    <div class="letter-info">
-                        <h3>给12岁的你</h3>
-                        <div class="timestamp">
-                            <span>📅</span>
-                            <span>写于 2026 年 8 月 25 日（弟弟12岁生日，农历七月十三）</span>
+        </section>
+
+        <section class="letters" aria-label="时光信件">
+            <article class="letter-card letter-card-locked" id="letter12">
+                <header class="letter-header">
+                    <div class="letter-heading">
+                        <span class="letter-age">12</span>
+                        <div>
+                            <p class="letter-kicker">第一封信</p>
+                            <h2>给12岁的你</h2>
+                            <p>写于 2026 年 8 月 25 日 · 农历七月十三</p>
                         </div>
                     </div>
+                    <span class="letter-status letter-status-locked" id="letter12Status">封印中</span>
+                </header>
+
+                <div class="sealed-letter" id="letter12Locked">
+                    <div class="seal-mark" aria-hidden="true">封</div>
+                    <p class="sealed-eyebrow">第一封信尚未开启</p>
+                    <h3>请在 2026 年 8 月 25 日再来</h3>
+                    <p>到达十二岁生日当天零点后，信件和成长照片会自动出现。</p>
                 </div>
-                <span class="letter-status open">✅ 已解锁</span>
-                <div class="stamp"><div class="stamp-ring"></div><div class="stamp-inner">二〇二六<br>夏·封</div></div>
-            </div>
-            <div class="letter-body">
-                <!-- 照片墙 -->
-                <div class="photo-gallery">
-                    <h4 style="text-align:center; margin-bottom:20px; color:#888; font-size:0.9rem;">成长瞬间</h4>
-                    <div class="photos-grid">
-                        <div class="photo-item"><img src="1787238756709_d.jpg" alt="七岁时的你，笑得很开心" loading="lazy" decoding="async"><div class="photo-caption">小时候</div></div>
-                        <div class="photo-item"><img src="1787238831642_d.jpg" alt="童年的回忆" loading="lazy" decoding="async"><div class="photo-caption">童年</div></div>
-                        <div class="photo-item"><img src="1787239180717_d.jpg" alt="和朋友们一起玩耍" loading="lazy" decoding="async"><div class="photo-caption">玩耍</div></div>
-                        <div class="photo-item"><img src="1787239252000_d.jpg" alt="灿烂的笑脸" loading="lazy" decoding="async"><div class="photo-caption">笑脸</div></div>
-                        <div class="photo-item"><img src="1787239308278_d.jpg" alt="成长路上的足迹" loading="lazy" decoding="async"><div class="photo-caption">成长</div></div>
-                        <div class="photo-item"><img src="1787239579111_d.jpg" alt="无忧无虑的快乐时光" loading="lazy" decoding="async"><div class="photo-caption">快乐</div></div>
-                        <div class="photo-item"><img src="1787239630260_d.jpg" alt="珍贵的童年回忆" loading="lazy" decoding="async"><div class="photo-caption">回忆</div></div>
-                        <div class="photo-item"><img src="1787239642585_d.jpg" alt="两岁时拍的照片" loading="lazy" decoding="async"><div class="photo-caption">儿时</div></div>
+
+                <div class="letter-body" id="letter12Body" hidden>
+                    <section class="photo-section" aria-labelledby="photoTitle">
+                        <div class="section-heading">
+                            <p class="letter-kicker">成长瞬间</p>
+                            <h3 id="photoTitle">记忆里的你</h3>
+                        </div>
+                        <div class="photo-grid" id="photoGrid">
+                            <button class="photo-item" type="button" data-caption="小时候">
+                                <img src="1787238756709_d.jpg" alt="七岁时的你，笑得很开心" loading="lazy" decoding="async">
+                                <span>小时候</span>
+                            </button>
+                            <button class="photo-item" type="button" data-caption="童年">
+                                <img src="1787238831642_d.jpg" alt="童年的回忆" loading="lazy" decoding="async">
+                                <span>童年</span>
+                            </button>
+                            <button class="photo-item" type="button" data-caption="玩耍">
+                                <img src="1787239180717_d.jpg" alt="和朋友们一起玩耍" loading="lazy" decoding="async">
+                                <span>玩耍</span>
+                            </button>
+                            <button class="photo-item" type="button" data-caption="笑脸">
+                                <img src="1787239252000_d.jpg" alt="灿烂的笑脸" loading="lazy" decoding="async">
+                                <span>笑脸</span>
+                            </button>
+                            <button class="photo-item" type="button" data-caption="成长">
+                                <img src="1787239308278_d.jpg" alt="成长路上的足迹" loading="lazy" decoding="async">
+                                <span>成长</span>
+                            </button>
+                            <button class="photo-item" type="button" data-caption="快乐">
+                                <img src="1787239579111_d.jpg" alt="无忧无虑的快乐时光" loading="lazy" decoding="async">
+                                <span>快乐</span>
+                            </button>
+                            <button class="photo-item" type="button" data-caption="回忆">
+                                <img src="1787239630260_d.jpg" alt="珍贵的童年回忆" loading="lazy" decoding="async">
+                                <span>回忆</span>
+                            </button>
+                            <button class="photo-item" type="button" data-caption="儿时">
+                                <img src="1787239642585_d.jpg" alt="两岁时拍的照片" loading="lazy" decoding="async">
+                                <span>儿时</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    <div class="letter-content">
+                        <p>亲爱的弟弟：</p>
+                        <p>今天是你12岁的生日。12岁，是一个有趣的年纪——你不再是小孩，但也还没成为大人。你在两者之间，有着最珍贵的自由。</p>
+                        <p>我想告诉你几件事：</p>
+                        <p><strong>第一，保持你的好奇心。</strong>你小时候总有问不完的“为什么”，我希望你永远不要丢掉这份特质。世界很大，未知很多，而你是那个带着问题前行的人。</p>
+                        <p><strong>第二，享受现在的每一刻。</strong>12岁的快乐很简单——一顿好吃的、一场游戏、一次和朋友出门。这些看似平凡的时刻，将来都会变成你最珍贵的回忆。</p>
+                        <p><strong>第三，不要太着急长大。</strong>我知道你经常羡慕大人的自由，但大人的世界也有它的沉重。趁现在，多笑、多玩、多尝试。</p>
+                        <p><strong>第四，记得家人。</strong>爸妈一直在你身边，我有时候可能会忙，但永远是你最坚实的后盾。</p>
+                        <p>生日快乐，我的弟弟。愿你的12岁，充满阳光和笑声。</p>
+                        <p>等6年后你18岁，再来读另一封信吧。那时你会明白我今天说的话。不知道那时候的你，会喜欢什么、害怕什么——我很期待知道那个答案。</p>
+                        <p class="letter-signature">爱你的哥哥<br><span>2026年夏</span></p>
                     </div>
                 </div>
-                
-                <div class="letter-content">
-                    <p>亲爱的弟弟：</p>
-                    <p>今天是你12岁的生日。12岁，是一个有趣的年纪——你不再是小孩，但也还没成为大人。你在两者之间，有着最珍贵的自由。</p>
-                    <p>我想告诉你几件事：</p>
-                    <p><strong>第一，保持你的好奇心。</strong> 你小时候总有问不完的"为什么"，我希望你永远不要丢掉这份特质。世界很大，未知很多，而你是那个带着问题前行的人。</p>
-                    <p><strong>第二，享受现在的每一刻。</strong> 12岁的快乐很简单——一顿好吃的、一场游戏、一次和朋友出门。这些看似平凡的时刻，将来都会变成你最珍贵的回忆。</p>
-                    <p><strong>第三，不要太着急长大。</strong> 我知道你经常羡慕大人的自由，但大人的世界也有它的沉重。趁现在，多笑、多玩、多尝试。</p>
-                    <p><strong>第四，记得家人。</strong> 爸妈一直在你身边，我有时候可能会忙，但永远是你最坚实的后盾。</p>
-                    <p>生日快乐，我的弟弟。愿你的12岁，充满阳光和笑声。</p>
-                    <p>等6年后你18岁，再来读另一封信吧。那时你会明白我今天说的话。不知道那时候的你，会喜欢什么、害怕什么——我很期待知道那个答案。</p>
-                </div>
-                <div class="letter-signature">爱你的哥哥 · 2026年夏</div>
-            </div>
-        </div>
-        
-        <!-- 18岁信件（封印） -->        <div class="letter-card locked" id="letter18">
-            <div class="letter-header" style="background: linear-gradient(135deg, rgba(155,89,182,0.1), rgba(245,166,35,0.1));">
-                <div class="letter-meta">
-                    <div class="letter-age" style="background: linear-gradient(135deg, var(--age18), var(--age12)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">18</div>
-                    <div class="letter-info">
-                        <h3>给18岁的你</h3>
-                        <div class="timestamp">
-                            <span>📅</span>
-                            <span>写于 2026 年 8 月 25 日（弟弟12岁生日，农历七月十三）</span>
+            </article>
+
+            <article class="letter-card letter-card-locked" id="letter18">
+                <header class="letter-header">
+                    <div class="letter-heading">
+                        <span class="letter-age letter-age-future">18</span>
+                        <div>
+                            <p class="letter-kicker">第二封信</p>
+                            <h2>给18岁的你</h2>
+                            <p>写于十二岁生日 · 等待成年礼</p>
                         </div>
                     </div>
+                    <span class="letter-status letter-status-locked" id="letter18Status">封印中</span>
+                </header>
+                <div class="sealed-letter" id="letter18Locked">
+                    <div class="seal-mark" aria-hidden="true">封</div>
+                    <p class="sealed-eyebrow">未来的信尚未开启</p>
+                    <h3>请在 2032 年 8 月 18 日再来</h3>
+                    <p>到达十八岁生日当天零点后，这封信会在页面中自动开启。</p>
+                    <button class="primary-button" id="verifyUnlockButton" type="button">查看封印状态</button>
                 </div>
-                <span class="letter-status locked">🔒 封印中</span>
-            </div>
-            <div class="letter-body" style="text-align: center; padding: 80px 30px;">
-                <div style="font-size: 6rem; margin-bottom: 30px; animation: pulse 2s infinite;">🔐</div>
-                <p style="color: #666; font-size: 1.3rem; margin-bottom: 15px;">这封信已封印</p>
-                <p style="color: #999; font-size: 1rem; margin-bottom: 10px;">解封日期：<strong style="color: var(--gold);">2032 年 8 月 18 日</strong>（农历七月十三）</p>
-                <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 30px;">届时你将年满18岁，成年快乐</p>
-                <button class="unlock-btn" onclick="tryUnlock()">尝试解锁</button>
-                <div class="scroll-hint" style="margin-top:25px;">
-                    <span>向下滚动查看信件</span>
-                    <span class="scroll-arrow">↓</span>
+                <div class="letter-body" id="letter18Body" hidden>
+                    <div class="letter-content">
+                        <p>亲爱的弟弟：</p>
+                        <p>当你展开这封信的时候，你正好18岁了。恭喜你，成年了！</p>
+                        <p>18岁，是成人礼，也是法律意义上的成年。但我不想只跟你讲这些大道理，我更想认真地对你说一句——<strong>生日快乐</strong>。</p>
+                        <p>这六年里，你会从一个总爱问“为什么”的少年，慢慢长成有自己想法、能独立思考、愿意为喜欢的事情投入热情的大人。无论那时的你是什么样子，我都为你一路走到这里感到骄傲。</p>
+                        <p>关于选择，我有三个建议：</p>
+                        <p><strong>第一，选择让你愿意长期学下去的事情，</strong>而不只是听起来最赚钱或最体面的事情。</p>
+                        <p><strong>第二，保护好你的好奇心。</strong>擅长可以慢慢练习，但真正想弄明白一件事的冲动很珍贵。</p>
+                        <p><strong>第三，如果两个方向看起来差不多，</strong>可以试着选择那个让你有一点害怕、又有一点兴奋的方向。</p>
+                        <p>人生不是一条只能向前的轨道，更像一片可以探索的旷野。你可以绕路，可以回头，也可以在途中改变方向。十八岁做出的选择很重要，但它不会成为对你一生的最终判决。</p>
+                        <p><strong>无论你怎么选择，我都会支持你。</strong>因为你是我弟弟，这是天生的，不需要你证明什么。</p>
+                        <p>最后，记得给爸妈一个拥抱。他们看着你长大，比你想象的还要骄傲。</p>
+                        <p>祝你18岁生日快乐，勇敢地做出属于自己的选择。</p>
+                        <p class="letter-signature">爱你的哥哥<br><span>2026年夏 · 写于你12岁时</span></p>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    
-    <footer>
-        <p>"这是天生的，不需要你证明什么"</p>
-        <p style="margin-top: 10px; font-size: 0.8rem;">
-            — 哥哥 · <span>2026年夏</span>
-        </p>
+            </article>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <blockquote>“这是天生的，不需要你证明什么。”</blockquote>
+        <p>哥哥 · 2026年夏</p>
     </footer>
-    
-    <script>(function() {
-    'use strict';
 
-        // ==================== 时间计算 ====================
-        
-        // 所有日期统一维护在此处，修改只需改这一处
-        const DATE_CONFIG = {
-            // 写信日期
-            writeDate:      new Date('2026-08-25T00:00:00'),
-            // 弟弟生日（农历七月十三 = 公历）
-            birthday:       new Date('2026-08-18T00:00:00'),
-            // 18岁解锁目标
-            unlockTarget:   new Date('2032-08-18T00:00:00'),
-        };
-        
-        const TARGET_DATE  = DATE_CONFIG.unlockTarget;
-        const WRITE_DATE   = DATE_CONFIG.writeDate;
-        const BIRTHDAY_12  = DATE_CONFIG.birthday;
-        const BIRTHDAY_18  = DATE_CONFIG.birthday;
+    <dialog class="modal lightbox" id="lightboxDialog" aria-labelledby="lightboxCaption">
+        <button class="modal-close" id="lightboxCloseButton" type="button" aria-label="关闭照片预览">×</button>
+        <button class="lightbox-nav lightbox-prev" id="lightboxPreviousButton" type="button" aria-label="上一张照片">‹</button>
+        <figure>
+            <img id="lightboxImage" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="">
+            <p id="lightboxCounter"></p>
+            <figcaption id="lightboxCaption"></figcaption>
+        </figure>
+        <button class="lightbox-nav lightbox-next" id="lightboxNextButton" type="button" aria-label="下一张照片">›</button>
+    </dialog>
 
-        // ==================== 配置常量 ====================
-        const CONFIG = {
-            PARTICLE_COUNT:       60,
-            PARTICLE_MIN_SPEED_Y: 0.1,
-            PARTICLE_MAX_SPEED_Y: 0.3,
-            PARTICLE_MAX_SPEED_X: 0.2,
-            PARTICLE_CONNECT_DIST: 100,
-            CONFETTI_COUNT:       80,
-            CONFETTI_LIFETIME:    4000,
-            MUSIC_VOLUME:         0.3,
-            COUNTDOWN_INTERVAL:   1000,
-        };
-        // 别名兼容
-        const PARTICLE_COUNT        = CONFIG.PARTICLE_COUNT;
-        const PARTICLE_MIN_SPEED_Y  = CONFIG.PARTICLE_MIN_SPEED_Y;
-        const PARTICLE_MAX_SPEED_Y  = CONFIG.PARTICLE_MAX_SPEED_Y;
-        const PARTICLE_MAX_SPEED_X  = CONFIG.PARTICLE_MAX_SPEED_X;
-        const PARTICLE_CONNECT_DIST = CONFIG.PARTICLE_CONNECT_DIST;
-        const CONFETTI_COUNT        = CONFIG.CONFETTI_COUNT;
-        const CONFETTI_LIFETIME     = CONFIG.CONFETTI_LIFETIME;
-        const MUSIC_VOLUME          = CONFIG.MUSIC_VOLUME;
-        const COUNTDOWN_INTERVAL    = CONFIG.COUNTDOWN_INTERVAL;
-        // Canvas roundRect polyfill（兼容旧浏览器）
-        if (!CanvasRenderingContext2D.prototype.roundRect) {
-            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
-                if (typeof r === 'number') r = [r, r, r, r];
-                const [tl, tr, br, bl] = r;
-                this.beginPath();
-                this.moveTo(x + tl, y);
-                this.lineTo(x + w - tr, y);
-                this.quadraticCurveTo(x + w, y, x + w, y + tr);
-                this.lineTo(x + w, y + h - br);
-                this.quadraticCurveTo(x + w, y + h, x + w - br, y + h);
-                this.lineTo(x + bl, y + h);
-                this.quadraticCurveTo(x, y + h, x, y + h - bl);
-                this.lineTo(x, y + tl);
-                this.quadraticCurveTo(x, y, x + tl, y);
-                this.closePath();
-                return this;
-            };
-        }
-
-
-        
-        // 更新当前时间显示
-        function updateCurrentTime() {
-            const now = new Date();
-            const options = { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric', 
-                weekday: 'long',
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit',
-                hour12: false
-            };
-            DOM.currentTime.textContent = '当前时间：' + now.toLocaleString('zh-CN', options);
-            
-            // 检查是否是弟弟的生日
-            const month = now.getMonth() + 1;
-            const day = now.getDate();
-            // 弟弟生日：每年8月18日
-            if (month === DATE_CONFIG.birthday.getMonth() + 1 && day === DATE_CONFIG.birthday.getDate()) {
-                const age = now.getFullYear() - BIRTHDAY_12.getFullYear();
-                const el = DOM.birthdayReminder;
-                // 隐藏彩蛋：不同年龄说不同话
-                const easterEggs = {
-                    13: '才过了一年，你长大了多少？',
-                    14: '初中啦！有没有比两年前更勇敢一点？',
-                    15: '三年了，你现在还会问那么多"为什么"吗？',
-                    16: '四年！离18岁只剩两年咯，哥哥在等你长大。',
-                    17: '还有一年！准备好了吗？',
-                    18: '🎉 18岁成人礼快乐！那封信等你很久了——快往下滑！',
-                };
-                if (easterEggs[age]) {
-                    el.innerHTML = `🎂 ${easterEggs[age]}`;
-                } else {
-                    el.innerHTML = `🎂 祝你${age}岁生日快乐！`;
-                }
-            } else {
-                DOM.birthdayReminder.textContent = '';
-            }
-        }
-        
-        // 更新倒计时
-        function updateCountdown() {
-            const now = new Date();
-            const target = new Date(TARGET_DATE);
-            
-            // 如果已到期
-            if (now >= target) {
-                DOM.years.textContent = '0';
-                DOM.months.textContent = '0';
-                DOM.days.textContent = '0';
-                DOM.hours.textContent = '0';
-                DOM.minutes.textContent = '0';
-                DOM.seconds.textContent = '0';
-                
-                if (!localStorage.getItem('unlocked')) {
-                    unlockLetter18();
-                }
-                return;
-            }
-            
-            // 精确计算年月日
-            let years = target.getFullYear() - now.getFullYear();
-            let months = target.getMonth() - now.getMonth();
-            let days = target.getDate() - now.getDate();
-            
-            // 如果天数不够减，借一个月
-            if (days < 0) {
-                months--;
-                // 获取上个月的天数
-                const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-                days += prevMonth.getDate();
-            }
-            
-            // 如果月份不够减，借一年
-            if (months < 0) {
-                years--;
-                months += 12;
-            }
-            
-            // 计算时分秒
-            let hours = target.getHours() - now.getHours();
-            let minutes = target.getMinutes() - now.getMinutes();
-            let seconds = target.getSeconds() - now.getSeconds();
-            
-            if (seconds < 0) {
-                minutes--;
-                seconds += 60;
-            }
-            if (minutes < 0) {
-                hours--;
-                minutes += 60;
-            }
-            if (hours < 0) {
-                days--;
-                hours += 24;
-            }
-            
-            DOM.years.textContent = years;
-            DOM.months.textContent = months;
-            DOM.days.textContent = days;
-            DOM.hours.textContent = hours;
-            DOM.minutes.textContent = minutes;
-            DOM.seconds.textContent = seconds;
-        }
-        
-        // 尝试解锁
-        function tryUnlock() {
-            const now = new Date();
-            if (now >= TARGET_DATE) {
-                unlockLetter18();
-            } else {
-                showSeal();
-            }
-        }
-        
-        // 显示封印
-        function showSeal() {
-            DOM.sealOverlay.classList.add('active');
-        }
-        
-        // 关闭封印
-        function closeSeal() {
-            DOM.sealOverlay.classList.remove('active');
-        }
-        
-        // 解锁18岁信件（带错误边界）
-        function unlockLetter18() {
-            try {
-            const card = DOM.letter18;
-            const badge = DOM.age18badge;
-            
-            // 添加燃烧效果
-            card.classList.add('burning');
-            
-            // 添加翻页效果
-            setTimeout(() => {
-                card.classList.add('flipping');
-            }, 500);
-            
-            // 更新状态
-            setTimeout(() => {
-                card.classList.remove('burning', 'flipping', 'locked');
-                card.innerHTML = `
-                    <div class="letter-header" style="background: linear-gradient(135deg, rgba(155,89,182,0.1), rgba(245,166,35,0.1));">
-                        <div class="letter-meta">
-                            <div class="letter-age" style="background: linear-gradient(135deg, var(--age18), var(--age12)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">18</div>
-                            <div class="letter-info">
-                                <h3>给18岁的你</h3>
-                                <div class="timestamp">
-                                    <span>📅</span>
-                                    <span>写于 2026 年 8 月 25 日（弟弟12岁生日，农历七月十三）</span>
-                                </div>
-                            </div>
-                        </div>
-                        <span class="letter-status open">✅ 已解锁</span>
-                    </div>
-                    <div class="letter-body">
-                        <div class="letter-content">
-                            <p>亲爱的弟弟：</p>
-                            <p>当你展开这封信的时候，你正好18岁了。恭喜你，成年了！</p>
-                            <p>18岁，是 legal age，是成人礼，是很多国家法律和意义上的成年。但我不想跟你讲这些大道理，因为你知道的，你比我更懂。</p>
-                            <p>我想说的是——<strong>生日快乐</strong>。</p>
-                            <p>这六年里，我看着你从一个什么都要问"为什么"的小孩，长成现在这个有自己的想法、会独立思考、会为了喜欢的事情投入热情的大男孩。你比我想象的要成熟，也要勇敢。</p>
-                            <p>关于选择，我有三个建议：</p>
-                            <p><strong>1. 选那个让你有动力学下去的</strong>，而不是听起来最"赚钱"或最"体面"的<br>
-                            <strong>2. 选那个能让你保持好奇心的</strong>，而不是你最擅长的（因为擅长可以练，好奇心难得）<br>
-                            <strong>3. 如果两个选项看起来差不多，选那个让你更害怕但更兴奋的</strong>——通常那就是你要去的方向</p>
-                            <p>人生的路不是轨道，是旷野。你可以绕路，可以回头，可以半路改方向。18岁选错了专业，40岁还能转行。这不是鸡汤，是真的。</p>
-                            <p><strong>无论你怎么选，我都会支持你。</strong> 因为你是我弟弟，这是天生的，不需要你证明什么。</p>
-                            <p>最后，记得给爸妈一个拥抱。他们看着你长大，比你以为的还要骄傲。</p>
-                            <p>祝你18岁生日快乐，做出属于自己的选择。</p>
-                        </div>
-                        <div class="letter-signature">爱你的哥哥 · 2026年夏写于你12岁时</div>
-                    </div>
-                `;
-                
-                badge.style.background = 'linear-gradient(135deg, var(--age12), var(--age18))';
-                badge.style.color = '#fff';
-                badge.textContent = '18岁 ✓';
-                
-                localStorage.setItem('unlocked', 'true');
-                
-                createConfetti();
-            }, 1200);
-            } catch(e) {
-                console.error('解锁信件异常:', e);
-                showTip('打开信件时出了点问题，请稍后再试');
-            }
-        }
-        
-        // 创建纸屑
-        function createConfetti() {
-            const colors = ['#f5a623', '#9b59b6', '#d4a574', '#e8c9a0', '#f5f0e8'];
-            
-            for (let i = 0; i < CONFETTI_COUNT; i++) {
-                setTimeout(() => {
-                    const piece = document.createElement('div');
-                    piece.style.cssText = `
-                        position: fixed;
-                        width: ${Math.random() * 12 + 6}px;
-                        height: ${Math.random() * 12 + 6}px;
-                        background: ${colors[Math.floor(Math.random() * colors.length)]};
-                        left: ${Math.random() * 100}vw;
-                        top: -20px;
-                        border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
-                        z-index: 9999;
-                        pointer-events: none;
-                        animation: fall ${Math.random() * 2 + 2}s linear forwards;
-                    `;
-                    document.body.appendChild(piece);
-                    setTimeout(() => piece.remove(), CONFETTI_LIFETIME);
-                }, i * 30);
-            }
-        }
-        
-        // Canvas 背景动画
-        function initCanvas() {
-            const canvas = DOM.bgCanvas;
-            const ctx = canvas.getContext('2d');
-            
-            function resize() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-            resize();
-            window.addEventListener('resize', resize);
-            
-            const particles = [];
-            class Particle {
-                constructor() {
-                    this.reset();
-                }
-                
-                reset() {
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 2 + 0.5;
-                    this.speedY = -Math.random() * PARTICLE_MAX_SPEED_Y - PARTICLE_MIN_SPEED_Y;
-                    this.speedX = (Math.random() - 0.5) * PARTICLE_MAX_SPEED_X;
-                    this.opacity = Math.random() * 0.4 + 0.1;
-                    this.color = Math.random() > 0.5 ? '#f5a623' : '#9b59b6';
-                }
-                
-                update() {
-                    this.y += this.speedY;
-                    this.x += this.speedX;
-                    
-                    if (this.y < -10) {
-                        this.reset();
-                        this.y = canvas.height + 10;
-                    }
-                }
-                
-                draw() {
-                    ctx.fillStyle = this.color;
-                    ctx.globalAlpha = this.opacity;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-            
-            for (let i = 0; i < PARTICLE_COUNT; i++) {
-                particles.push(new Particle());
-            }
-            
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.globalAlpha = 1;
-                
-                particles.forEach(p => {
-                    p.update();
-                    p.draw();
-                });
-                
-                // 连线
-                for (let i = 0; i < particles.length; i++) {
-                    for (let j = i + 1; j < particles.length; j++) {
-                        const dx = particles[i].x - particles[j].x;
-                        const dy = particles[i].y - particles[j].y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        
-                        if (dist < PARTICLE_CONNECT_DIST) {
-                            ctx.strokeStyle = `rgba(212, 165, 116, ${0.15 * (1 - dist / 100)})`;
-                            ctx.lineWidth = 1;
-                            ctx.beginPath();
-                            ctx.moveTo(particles[i].x, particles[i].y);
-                            ctx.lineTo(particles[j].x, particles[j].y);
-                            ctx.stroke();
-                        }
-                    }
-                }
-                
-                requestAnimationFrame(animate);
-            }
-            animate();
-        }
-        
-        // 初始化
-        // 错误边界：关键初始化函数，崩溃不影响页面主体
-        
-        // DOM缓存
-        const $ = id => document.getElementById(id);
-        const DOM = {currentTime:null,birthdayReminder:null,years:null,months:null,days:null,hours:null,minutes:null,seconds:null,sealOverlay:null,lightbox:null,lightboxImg:null,lightboxCaption:null,lightboxCounter:null,shareOverlay:null,shareImg:null,shareCanvas:null,qrCanvas:null,shareLinkInput:null,copyBtn:null,letter18:null,age18badge:null,bgCanvas:null,bgMusic:null,musicControl:null};
-        function cacheDOM() { for (const k in DOM) DOM[k] = $(k); }
-        
-        // 定时器管理
-        const timers=[];
-        function scheduleTimer(fn,d){const id=setTimeout(()=>{timers.splice(timers.indexOf(id),1);fn()},d);timers.push(id);return id}
-        function clearAllTimers(){timers.forEach(id=>clearTimeout(id));timers.length=0}
-        
-        // 魔法数字常量
-        const SHARE_W=600,SHARE_H=900,SHARE_BOX_W=72,SHARE_BOX_H=60,SHARE_GAP=8,QR_SIZE=150,ANIM_FLIP=500,ANIM_UNLOCK=1200,ANIM_CONFETTI=30,TIP_DUR=3000,BTN_RESET=2000;
-
-function safeInit() {
-            try { cacheDOM(); } catch(e) { console.error('DOM缓存失败:', e); }
-            try { updateCurrentTime(); } catch(e) { console.error('时间初始化失败:', e); }
-            try { updateCountdown(); } catch(e) { console.error('倒计时初始化失败:', e); }
-            try { initCanvas(); } catch(e) { console.error('Canvas初始化失败:', e); }
-            try { initLightbox(); } catch(e) { console.error('灯箱初始化失败:', e); }
-        }
-        safeInit();
-        
-        // 音乐控制
-        const bgMusic = DOM.bgMusic;
-        const musicControl = DOM.musicControl;
-        bgMusic.preload = 'metadata';
-        bgMusic.volume = MUSIC_VOLUME;
-
-        bgMusic.addEventListener('error', (e) => {
-            console.error('音频加载失败:', e);
-            showTip('音乐加载失败，请稍后重试');
-        });
-
-        function toggleMusic() {
-            if (bgMusic.paused) {
-                const playPromise = bgMusic.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(e => {
-                        showTip('请点击图标播放音乐');
-                    });
-                }
-                musicControl.classList.remove('paused');
-                musicControl.querySelector('.music-icon').textContent = '🎵';
-            } else {
-                bgMusic.pause();
-                musicControl.classList.add('paused');
-                musicControl.querySelector('.music-icon').textContent = '🔇';
-            }
-        }
-
-        // ===== 照片灯箱 =====
-        let lightboxIndex = 0;
-        const photos = [];
-        const photoCaptions = [];
-
-        function initLightbox() {
-            const items = document.querySelectorAll('.photo-item');
-            items.forEach((item, i) => {
-                const img = item.querySelector('img');
-                const caption = item.querySelector('.photo-caption');
-                photos.push(img.src);
-                photoCaptions.push(caption ? caption.textContent : '');
-                item.addEventListener('click', () => openLightbox(i));
-            });
-        }
-
-        function openLightbox(index) {
-            lightboxIndex = index;
-            updateLightbox();
-            DOM.lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeLightbox() {
-            DOM.lightbox.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        function navLightbox(dir) {
-            lightboxIndex = (lightboxIndex + dir + photos.length) % photos.length;
-            updateLightbox();
-        }
-
-        function updateLightbox() {
-            const img = DOM.lightboxImg;
-            const caption = DOM.lightboxCaption;
-            const counter = DOM.lightboxCounter;
-            img.src = photos[lightboxIndex];
-            img.alt = photoCaptions[lightboxIndex];
-            caption.textContent = photoCaptions[lightboxIndex];
-            counter.textContent = `${lightboxIndex + 1} / ${photos.length}`;
-        }
-
-        document.addEventListener('keydown', e => {
-            const lb = DOM.lightbox;
-            if (!lb.classList.contains('active')) return;
-            if (e.key === 'Escape') closeLightbox();
-            if (e.key === 'ArrowLeft') navLightbox(-1);
-            if (e.key === 'ArrowRight') navLightbox(1);
-        });
-
-        DOM.lightbox.addEventListener('click', e => {
-            if (e.target.id === 'lightbox') closeLightbox();
-        });
-        let _tSX=0;document.addEventListener('touchstart',e=>{if(!DOM.lightbox||!DOM.lightbox.classList.contains('active'))return;_tSX=e.changedTouches[0].screenX},{passive:true});document.addEventListener('touchend',e=>{if(!DOM.lightbox||!DOM.lightbox.classList.contains('active'))return;const d=_tSX-e.changedTouches[0].screenX;if(Math.abs(d)>50&&typeof navLightbox==='function')navLightbox(d>0?1:-1)},{passive:true});
-        
-        // 显示提示
-        function showTip(text) {
-            const tip = document.createElement('div');
-            tip.textContent = text;
-            tip.style.cssText = `
-                position: fixed;
-                bottom: 90px;
-                right: 30px;
-                background: rgba(0,0,0,0.8);
-                color: #fff;
-                padding: 10px 20px;
-                border-radius: 20px;
-                font-size: 0.85rem;
-                z-index: 1001;
-                animation: fadeInOut 3s forwards;
-            `;
-            document.body.appendChild(tip);
-            setTimeout(() => tip.remove(), 3000);
-        }
-        
-        // 添加CSS动画
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeInOut {
-                0% { opacity: 0; transform: translateY(10px); }
-                20% { opacity: 1; transform: translateY(0); }
-                80% { opacity: 1; transform: translateY(0); }
-                100% { opacity: 0; transform: translateY(-10px); }
-            }
-            @keyframes fall {
-                to { transform: translateY(105vh) rotate(720deg); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-
-        setInterval(updateCurrentTime, COUNTDOWN_INTERVAL);
-        setInterval(updateCountdown, COUNTDOWN_INTERVAL);
-        
-        // 检查URL参数
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('unlocked') && new Date() >= TARGET_DATE) {
-            unlockLetter18();
-        }
-    // ===== 分享卡片生成 =====
-    function generateShareCard() {
-const canvas = DOM.shareCanvas;
-        const ctx = canvas.getContext('2d');
-        const W = 600, H = 900;
-        canvas.width = W;
-        canvas.height = H;
-
-        // 背景渐变
-        const grad = ctx.createLinearGradient(0, 0, W, H);
-        grad.addColorStop(0, '#0a0a0f');
-        grad.addColorStop(1, '#1a1520');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, W, H);
-
-        // 装饰粒子
-        const rng = (s) => { let x = Math.sin(s) * 10000; return x - Math.floor(x); };
-        for (let i = 0; i < 60; i++) {
-            const x = rng(i * 7.1) * W;
-            const y = rng(i * 13.3) * H;
-            const r = rng(i * 3.7) * 2 + 0.5;
-            ctx.beginPath();
-            ctx.arc(x, y, r, 0, Math.PI * 2);
-            ctx.fillStyle = rng(i * 11) > 0.5 ? 'rgba(245,166,35,0.3)' : 'rgba(155,89,182,0.3)';
-            ctx.fill();
-        }
-
-        // 顶部装饰线
-        ctx.strokeStyle = 'rgba(212,165,116,0.3)';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(60, 80);
-        ctx.lineTo(W - 60, 80);
-        ctx.stroke();
-
-        // 标题
-        ctx.fillStyle = '#d4a574';
-        ctx.font = '600 14px "Noto Serif SC", serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('时光胶囊', W / 2, 55);
-
-        // 主标题
-        ctx.font = '700 32px "Ma Shan Zheng", "Noto Serif SC", cursive';
-        const titleGrad = ctx.createLinearGradient(W/2 - 100, 0, W/2 + 100, 0);
-        titleGrad.addColorStop(0, '#f5a623');
-        titleGrad.addColorStop(1, '#9b59b6');
-        ctx.fillStyle = titleGrad;
-        ctx.fillText('给未来的你', W / 2, 110);
-
-        // 副标题
-        ctx.fillStyle = 'rgba(245,240,232,0.5)';
-        ctx.font = '400 13px "Noto Serif SC", serif';
-        ctx.fillText('一封来自哥哥的信 · 封存于 2026年夏', W / 2, 140);
-
-        // 分隔线
-        ctx.strokeStyle = 'rgba(212,165,116,0.15)';
-        ctx.beginPath();
-        ctx.moveTo(80, 165);
-        ctx.lineTo(W - 80, 165);
-        ctx.stroke();
-
-        // 倒计时区域
-        const now = new Date();
-        const target = DATE_CONFIG.unlockTarget;
-        let years = target.getFullYear() - now.getFullYear();
-        let months = target.getMonth() - now.getMonth();
-        let days = target.getDate() - now.getDate();
-        if (days < 0) { months--; const pm = new Date(now.getFullYear(), now.getMonth(), 0); days += pm.getDate(); }
-        if (months < 0) { years--; months += 12; }
-        const hours = target.getHours() - now.getHours();
-        const minutes = target.getMinutes() - now.getMinutes();
-        const seconds = target.getSeconds() - now.getSeconds();
-
-        ctx.fillStyle = 'rgba(245,240,232,0.4)';
-        ctx.font = '400 12px "Noto Serif SC", serif';
-        ctx.fillText('距离 18 岁生日还有', W / 2, 200);
-
-        // 倒计时数字
-        const timeUnits = [
-            { val: years, label: '年' },
-            { val: months, label: '月' },
-            { val: days, label: '天' },
-            { val: hours < 0 ? 0 : hours, label: '时' },
-            { val: minutes < 0 ? 0 : minutes, label: '分' },
-            { val: seconds < 0 ? 0 : seconds, label: '秒' },
-        ];
-
-        const boxW = 72, boxH = 60, gap = 8;
-        const totalW = timeUnits.length * boxW + (timeUnits.length - 1) * gap;
-        const startX = (W - totalW) / 2;
-
-        timeUnits.forEach((unit, i) => {
-            const x = startX + i * (boxW + gap);
-            // 背景框
-            ctx.fillStyle = 'rgba(255,255,255,0.04)';
-            ctx.strokeStyle = 'rgba(212,165,116,0.2)';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.roundRect(x, 220, boxW, boxH, 8);
-            ctx.fill();
-            ctx.stroke();
-            // 数字
-            ctx.fillStyle = '#d4a574';
-            ctx.font = '700 24px monospace';
-            ctx.textAlign = 'center';
-            ctx.fillText(unit.val, x + boxW / 2, 258);
-            // 标签
-            ctx.fillStyle = 'rgba(245,240,232,0.35)';
-            ctx.font = '400 10px "Noto Serif SC", serif';
-            ctx.fillText(unit.label, x + boxW / 2, 275);
-        });
-
-        // 分隔线
-        ctx.strokeStyle = 'rgba(212,165,116,0.15)';
-        ctx.beginPath();
-        ctx.moveTo(80, 310);
-        ctx.lineTo(W - 80, 310);
-        ctx.stroke();
-
-        // 信件简介
-        ctx.fillStyle = 'rgba(245,240,232,0.6)';
-        ctx.font = '400 13px "Noto Serif SC", serif';
-        ctx.fillText('一封来自哥哥的礼物', W / 2, 345);
-        ctx.fillText('分别在 12 岁与 18 岁开启', W / 2, 368);
-
-        // 引语卡片
-        ctx.fillStyle = 'rgba(245,240,232,0.04)';
-        ctx.strokeStyle = 'rgba(212,165,116,0.2)';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.roundRect(60, 395, W - 120, 80, 10);
-        ctx.fill();
-        ctx.stroke();
-        ctx.fillStyle = 'rgba(212,165,116,0.8)';
-        ctx.font = '400 14px "Ma Shan Zheng", "Noto Serif SC", cursive';
-        ctx.fillText('"这是天生的，不需要你证明什么"', W / 2, 430);
-        ctx.fillStyle = 'rgba(245,240,232,0.35)';
-        ctx.font = '400 11px "Noto Serif SC", serif';
-        ctx.fillText('— 哥哥 · 2026年夏', W / 2, 455);
-
-        // 底部装饰
-        ctx.strokeStyle = 'rgba(212,165,116,0.2)';
-        ctx.beginPath();
-        ctx.moveTo(60, H - 80);
-        ctx.lineTo(W - 60, H - 80);
-        ctx.stroke();
-
-        ctx.fillStyle = 'rgba(245,240,232,0.25)';
-        ctx.font = '400 11px "Noto Serif SC", serif';
-        ctx.fillText('📅 写信日期：2026年8月25日（农历七月十三）', W / 2, H - 55);
-        ctx.fillText('⏳ 解封日期：2032年8月18日（农历七月十三）', W / 2, H - 35);
-
-        // 底部 logo
-        ctx.fillStyle = 'rgba(245,166,35,0.6)';
-        ctx.font = '600 11px "Noto Serif SC", serif';
-        ctx.fillText('时光胶囊 · 哥哥写给弟弟的信', W / 2, H - 10);
-
-        // 转为 base64 图片显示
-        const dataUrl = canvas.toDataURL('image/png');
-        DOM.shareImg.src = dataUrl;
-        
-        // 生成二维码
-        generateQRCode(window.location.href);
-        
-        // 设置链接输入框
-        DOM.shareLinkInput.value = window.location.href;
-        
-        // 显示遮罩
-        DOM.shareOverlay.classList.add('active');
-    }
-
-    // ===== 纯前端QR码生成器 =====
-    function generateQRCode(text) {
-        const qrCanvas = DOM.qrCanvas;
-        if (!qrCanvas) return;
-        const ctx = qrCanvas.getContext('2d');
-        const size = 150;
-        qrCanvas.width = size;
-        qrCanvas.height = size;
-        
-        // 简化的QR码绘制（使用点阵模拟）
-        // 实际项目中可引入qrcode.js库获得更精确的QR码
-        ctx.fillStyle = '#f5f0e8';
-        ctx.fillRect(0, 0, size, size);
-        
-        // 使用text的哈希生成确定性图案
-        const hash = Array.from(text).reduce((a, c) => ((a << 5) - a + c.charCodeAt(0)) | 0, 0);
-        const mod = Math.abs(hash) % 1000;
-        
-        // 绘制定位图案（三个角落的正方形）
-        function drawFinder(x, y) {
-            ctx.fillStyle = '#0a0a0f';
-            ctx.fillRect(x, y, 25, 25);
-            ctx.fillStyle = '#f5f0e8';
-            ctx.fillRect(x+4, y+4, 17, 17);
-            ctx.fillStyle = '#0a0a0f';
-            ctx.fillRect(x+8, y+8, 9, 9);
-        }
-        drawFinder(5, 5);
-        drawFinder(size-30, 5);
-        drawFinder(5, size-30);
-        
-        // 绘制数据区域（基于URL生成确定性图案）
-        ctx.fillStyle = '#0a0a0f';
-        const seed = Math.abs(mod);
-        for (let i = 0; i < 50; i++) {
-            const x = 35 + ((seed * (i + 1) * 7) % (size - 40));
-            const y = 35 + ((seed * (i + 1) * 13) % (size - 40));
-            ctx.fillRect(x, y, 4, 4);
-        }
-        
-        // 中心文字
-        ctx.fillStyle = '#d4a574';
-        ctx.font = 'bold 14px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('时光', size/2, size/2);
-    }
-
-    // ===== Web Share API =====
-    async function tryWebShare() {
-        const shareData = {
-            title: '时光胶囊 | 给未来的你',
-            text: '这是一封来自哥哥写给弟弟的信，封存于2026年夏，在12岁与18岁两个时刻开启。还有' + getCountdownText() + '就到18岁了！',
-            url: window.location.href
-        };
-        
-        if (navigator.share) {
-            try {
-                await navigator.share(shareData);
-            } catch (err) {
-                if (err.name !== 'AbortError') {
-                    console.error('分享失败:', err);
-                    showTip('分享已取消');
-                }
-            }
-        } else {
-            showTip('当前浏览器不支持分享功能');
-        }
-    }
-    
-    function getCountdownText() {
-        const now = new Date();
-        const target = DATE_CONFIG.unlockTarget;
-        let years = target.getFullYear() - now.getFullYear();
-        let months = target.getMonth() - now.getMonth();
-        let days = target.getDate() - now.getDate();
-        if (days < 0) { months--; const pm = new Date(now.getFullYear(), now.getMonth(), 0); days += pm.getDate(); }
-        if (months < 0) { years--; months += 12; }
-        if (years > 0) return years + '年';
-        if (months > 0) return months + '个月';
-        return days + '天';
-    }
-
-    // ===== 复制链接 =====
-    function copyLink() {
-        const input = DOM.shareLinkInput;
-        input.select();
-        input.setSelectionRange(0, 99999);
-        
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(window.location.href).then(() => {
-                const btn = DOM.copyBtn;
-                const orig = btn.innerHTML;
-                btn.innerHTML = '✅ 已复制';
-                setTimeout(() => { btn.innerHTML = orig; }, 2000);
-                showTip('链接已复制到剪贴板');
-            }).catch(() => {
-                showTip('复制失败，请手动复制');
-            });
-        } else {
-            document.execCommand('copy');
-            showTip('链接已复制');
-        }
-        // 转为 base64 图片显示
-        const dataUrl = canvas.toDataURL('image/png');
-        DOM.shareImg.src = dataUrl;
-        
-        // 生成二维码
-        generateQRCode(window.location.href);
-        
-        // 设置链接输入框
-        DOM.shareLinkInput.value = window.location.href;
-        
-        // 显示遮罩
-        DOM.shareOverlay.classList.add('active');
-    }
-
-    // ===== 纯前端QR码生成器 =====
-    }
-
-    function hideShareOverlay() {
-        DOM.shareOverlay.classList.remove('active');
-
-    // 暴露给 HTML 内联 onclick 调用
-    window.toggleMusic = toggleMusic;
-    window.tryUnlock = tryUnlock;
-    window.showSeal = showSeal;
-    window.closeSeal = closeSeal;
-    window.unlockLetter18 = unlockLetter18;
-    window.openLightbox = openLightbox;
-    window.closeLightbox = closeLightbox;
-    window.navLightbox = navLightbox;
-    window.generateShareCard = generateShareCard;
-    window.hideShareOverlay = closeShareOverlay;
-})();</script>
-
-</head>
-<body>
-    <!-- 背景音乐 - Kiss The Rain -->
-    <audio id="bgMusic" loop preload="metadata">
-        <source src="music.mp3" type="audio/mpeg">
-    </audio>
-    
-    <!-- 音乐控制按钮 -->
-    <div style="position:fixed;bottom:30px;right:30px;z-index:1000;display:flex;flex-direction:column;align-items:center;gap:4px;">
-        <div class="music-control paused" id="musicControl" onclick="toggleMusic()" style="position:static;">
-            <div class="music-icon">🔇</div>
-            <div class="music-bars">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
+    <dialog class="modal share-dialog" id="shareDialog" aria-labelledby="shareTitle">
+        <div class="modal-panel">
+            <button class="modal-close" id="shareCloseButton" type="button" aria-label="关闭分享窗口">×</button>
+            <p class="modal-eyebrow">留住这一刻</p>
+            <h2 id="shareTitle">分享时光胶囊</h2>
+            <img class="share-preview" id="sharePreview" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="时光胶囊分享海报预览">
+            <canvas class="share-canvas" id="shareCanvas" width="600" height="900" aria-hidden="true"></canvas>
+            <div class="qr-block">
+                <img id="siteQrCode" src="assets/site-qr.svg" alt="访问时光胶囊网站的二维码" width="160" height="160">
+                <div>
+                    <strong>扫码访问</strong>
+                    <p>https://bb6894.github.io/</p>
+                </div>
+            </div>
+            <div class="share-actions">
+                <button class="secondary-button" id="systemShareButton" type="button">系统分享</button>
+                <button class="secondary-button" id="copyLinkButton" type="button">复制链接</button>
+                <button class="primary-button" id="downloadPosterButton" type="button">保存海报</button>
             </div>
         </div>
-        <span style="color:rgba(212,165,116,0.45);font-size:0.65rem;letter-spacing:1px;margin-top:2px;">Kiss The Rain</span>
-    </div>
-    
-    <!-- 分享按钮 -->
-    <div class="share-btn" id="shareBtn" onclick="generateShareCard()" title="生成分享卡片">📤</div>
+    </dialog>
 
-    <!-- 分享结果遮罩 -->
-    <div class="seal-overlay" id="shareOverlay" style="z-index:2500;padding:20px;overflow-y:auto;" onclick="hideShareOverlay()">
-        <div onclick="event.stopPropagation()" style="max-width:400px;margin:0 auto;display:flex;flex-direction:column;gap:16px;">
-            <!-- 海报预览 -->
-            <img id="shareImg" style="width:100%;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5);" alt="时光胶囊分享卡片">
-            
-            <!-- 二维码区域 -->
-            <div style="text-align:center;">
-                <canvas id="qrCanvas" style="border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.3);"></canvas>
-                <p style="color:rgba(245,240,232,0.4);font-size:0.75rem;margin-top:8px;">微信扫码查看</p>
-            </div>
-            
-            <!-- 按钮组 -->
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-                <button onclick="tryWebShare()" style="padding:12px;background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.4);color:#f5a623;border-radius:12px;font-size:0.9rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
-                    📤 系统分享
-                </button>
-                <button onclick="copyLink()" id="copyBtn" style="padding:12px;background:rgba(155,89,182,0.15);border:1px solid rgba(155,89,182,0.4);color:#9b59b6;border-radius:12px;font-size:0.9rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
-                    📋 复制链接
-                </button>
-                <button onclick="downloadShareCard()" style="padding:12px;background:rgba(212,165,116,0.15);border:1px solid rgba(212,165,116,0.4);color:#d4a574;border-radius:12px;font-size:0.9rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
-                    📥 保存海报
-                </button>
-                <button onclick="hideShareOverlay()" style="padding:12px;background:transparent;border:1px solid rgba(245,240,232,0.2);color:rgba(245,240,232,0.5);border-radius:12px;font-size:0.9rem;cursor:pointer;font-family:'Noto Serif SC',serif;">
-                    ✕ 关闭
-                </button>
-            </div>
-            
-            <!-- 链接输入框 -->
-            <div style="display:flex;gap:8px;">
-                <input id="shareLinkInput" readonly style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(212,165,116,0.2);border-radius:8px;color:rgba(245,240,232,0.6);font-size:0.75rem;font-family:monospace;outline:none;">
-            </div>
+    <dialog class="modal unlock-dialog" id="unlockDialog" aria-labelledby="unlockTitle">
+        <div class="modal-panel modal-panel-compact">
+            <button class="modal-close" id="unlockCloseButton" type="button" aria-label="关闭封印状态窗口">×</button>
+            <div class="seal-mark seal-mark-small" aria-hidden="true">封</div>
+            <h2 id="unlockTitle">封印状态</h2>
+            <p id="unlockMessage" aria-live="polite">正在检查生日日期…</p>
+            <button class="secondary-button" id="unlockConfirmButton" type="button">知道了</button>
         </div>
-    </div>
+    </dialog>
 
-    <!-- 背景Canvas -->
-    <canvas class="bg-canvas" id="bgCanvas"></canvas>
-    
-    <!-- 封印遮罩 -->
-    <div class="seal-overlay" id="sealOverlay">
-        <div class="seal-icon">🔒</div>
-        <div class="seal-text">此信已封印</div>
-        <div class="seal-subtext">请等待 2032 年 8 月，属于你的时刻</div>
-        <button class="seal-close" onclick="closeSeal()">返回</button>
-    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <!-- 照片灯箱 -->
-    <div class="lightbox" id="lightbox">
-        <span class="lightbox-close" onclick="closeLightbox()">×</span>
-        <span class="lightbox-nav lightbox-prev" onclick="navLightbox(-1)">‹</span>
-        <span class="lightbox-nav lightbox-next" onclick="navLightbox(1)">›</span>
-        <img id="lightboxImg" src="" alt="">
-        <div class="lightbox-caption" id="lightboxCaption"></div>
-        <div class="lightbox-counter" id="lightboxCounter"></div>
-    </div>
-    
-    <!-- 导航 -->
-    <nav>
-        <div class="logo">时光胶囊</div>
-        <div style="display: flex; gap: 15px; font-size: 0.85rem;">
-            <span style="padding: 6px 15px; background: var(--age12); color: #000; border-radius: 15px; font-weight: 600;">12岁 ✓</span>
-            <span style="padding: 6px 15px; background: rgba(255,255,255,0.1); border-radius: 15px; color: rgba(255,255,255,0.5);" id="age18badge">18岁 🔒</span>
-        </div>
-    </nav>
-    
-    <!-- 英雄区 -->
-    <section class="hero">
-        <h1>时光胶囊</h1>
-        <p>一封来自哥哥的礼物<br>封存于 <span id="writeDate">2026年夏</span><br>分为两封信，分别在 12 岁与 18 岁开启</p>
-        
-        <!-- 当前时间显示 -->
-        <div class="time-display">
-            <div class="current-time" id="currentTime">当前时间：加载中...</div>
-            <div class="birthday-reminder" id="birthdayReminder"></div>
-        </div>
-        
-        <!-- 倒计时 -->
-        <div class="countdown-container">
-            <div class="countdown-title">⏳ 距离 18 岁生日还有</div>
-            <div class="countdown-grid">
-                <div class="countdown-item">
-                    <div class="countdown-number" id="years">6</div>
-                    <div class="countdown-label">年</div>
-                </div>
-                <div class="countdown-divider">:</div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="months">0</div>
-                    <div class="countdown-label">月</div>
-                </div>
-                <div class="countdown-divider">:</div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="days">0</div>
-                    <div class="countdown-label">天</div>
-                </div>
-                <div class="countdown-divider">:</div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="hours">0</div>
-                    <div class="countdown-label">时</div>
-                </div>
-                <div class="countdown-divider">:</div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="minutes">0</div>
-                    <div class="countdown-label">分</div>
-                </div>
-                <div class="countdown-divider">:</div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="seconds">0</div>
-                    <div class="countdown-label">秒</div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- 信件容器 -->
-    <div class="letters-container">
-        <!-- 12岁信件 -->
-        <div class="letter-card" id="letter12">
-            <div class="letter-header">
-                <div class="letter-meta">
-                    <div class="letter-age">12</div>
-                    <div class="letter-info">
-                        <h3>给12岁的你</h3>
-                        <div class="timestamp">
-                            <span>📅</span>
-                            <span>写于 2026 年 8 月 25 日（弟弟12岁生日，农历七月十三）</span>
-                        </div>
-                    </div>
-                </div>
-                <span class="letter-status open">✅ 已解锁</span>
-                <div class="stamp"><div class="stamp-ring"></div><div class="stamp-inner">二〇二六<br>夏·封</div></div>
-            </div>
-            <div class="letter-body">
-                <!-- 照片墙 -->
-                <div class="photo-gallery">
-                    <h4 style="text-align:center; margin-bottom:20px; color:#888; font-size:0.9rem;">成长瞬间</h4>
-                    <div class="photos-grid">
-                        <div class="photo-item"><img src="1787238756709_d.jpg" alt="七岁时的你，笑得很开心" loading="lazy" decoding="async"><div class="photo-caption">小时候</div></div>
-                        <div class="photo-item"><img src="1787238831642_d.jpg" alt="童年的回忆" loading="lazy" decoding="async"><div class="photo-caption">童年</div></div>
-                        <div class="photo-item"><img src="1787239180717_d.jpg" alt="和朋友们一起玩耍" loading="lazy" decoding="async"><div class="photo-caption">玩耍</div></div>
-                        <div class="photo-item"><img src="1787239252000_d.jpg" alt="灿烂的笑脸" loading="lazy" decoding="async"><div class="photo-caption">笑脸</div></div>
-                        <div class="photo-item"><img src="1787239308278_d.jpg" alt="成长路上的足迹" loading="lazy" decoding="async"><div class="photo-caption">成长</div></div>
-                        <div class="photo-item"><img src="1787239579111_d.jpg" alt="无忧无虑的快乐时光" loading="lazy" decoding="async"><div class="photo-caption">快乐</div></div>
-                        <div class="photo-item"><img src="1787239630260_d.jpg" alt="珍贵的童年回忆" loading="lazy" decoding="async"><div class="photo-caption">回忆</div></div>
-                        <div class="photo-item"><img src="1787239642585_d.jpg" alt="两岁时拍的照片" loading="lazy" decoding="async"><div class="photo-caption">儿时</div></div>
-                    </div>
-                </div>
-                
-                <div class="letter-content">
-                    <p>亲爱的弟弟：</p>
-                    <p>今天是你12岁的生日。12岁，是一个有趣的年纪——你不再是小孩，但也还没成为大人。你在两者之间，有着最珍贵的自由。</p>
-                    <p>我想告诉你几件事：</p>
-                    <p><strong>第一，保持你的好奇心。</strong> 你小时候总有问不完的"为什么"，我希望你永远不要丢掉这份特质。世界很大，未知很多，而你是那个带着问题前行的人。</p>
-                    <p><strong>第二，享受现在的每一刻。</strong> 12岁的快乐很简单——一顿好吃的、一场游戏、一次和朋友出门。这些看似平凡的时刻，将来都会变成你最珍贵的回忆。</p>
-                    <p><strong>第三，不要太着急长大。</strong> 我知道你经常羡慕大人的自由，但大人的世界也有它的沉重。趁现在，多笑、多玩、多尝试。</p>
-                    <p><strong>第四，记得家人。</strong> 爸妈一直在你身边，我有时候可能会忙，但永远是你最坚实的后盾。</p>
-                    <p>生日快乐，我的弟弟。愿你的12岁，充满阳光和笑声。</p>
-                    <p>等6年后你18岁，再来读另一封信吧。那时你会明白我今天说的话。不知道那时候的你，会喜欢什么、害怕什么——我很期待知道那个答案。</p>
-                </div>
-                <div class="letter-signature">爱你的哥哥 · 2026年夏</div>
-            </div>
-        </div>
-        
-        <!-- 18岁信件（封印） -->        <div class="letter-card locked" id="letter18">
-            <div class="letter-header" style="background: linear-gradient(135deg, rgba(155,89,182,0.1), rgba(245,166,35,0.1));">
-                <div class="letter-meta">
-                    <div class="letter-age" style="background: linear-gradient(135deg, var(--age18), var(--age12)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">18</div>
-                    <div class="letter-info">
-                        <h3>给18岁的你</h3>
-                        <div class="timestamp">
-                            <span>📅</span>
-                            <span>写于 2026 年 8 月 25 日（弟弟12岁生日，农历七月十三）</span>
-                        </div>
-                    </div>
-                </div>
-                <span class="letter-status locked">🔒 封印中</span>
-            </div>
-            <div class="letter-body" style="text-align: center; padding: 80px 30px;">
-                <div style="font-size: 6rem; margin-bottom: 30px; animation: pulse 2s infinite;">🔐</div>
-                <p style="color: #666; font-size: 1.3rem; margin-bottom: 15px;">这封信已封印</p>
-                <p style="color: #999; font-size: 1rem; margin-bottom: 10px;">解封日期：<strong style="color: var(--gold);">2032 年 8 月 18 日</strong>（农历七月十三）</p>
-                <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 30px;">届时你将年满18岁，成年快乐</p>
-                <button class="unlock-btn" onclick="tryUnlock()">尝试解锁</button>
-                <div class="scroll-hint" style="margin-top:25px;">
-                    <span>向下滚动查看信件</span>
-                    <span class="scroll-arrow">↓</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <footer>
-        <p>"这是天生的，不需要你证明什么"</p>
-        <p style="margin-top: 10px; font-size: 0.8rem;">
-            — 哥哥 · <span>2026年夏</span>
-        </p>
-    </footer>
-    
-    </html>
+    <script type="module" src="assets/app.js"></script>
+</body>
+</html>

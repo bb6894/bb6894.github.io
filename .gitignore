@@ -1,0 +1,14 @@
+# Local tools and generated verification artifacts
+.mimosa/
+.playwright-cli/
+.zcode/
+node_modules/
+output/
+$null
+
+# Private drafts and non-production page experiments
+给18岁的自己-*.md
+index-locked.html
+index-now.html
+time-capsule*.html
+圆锁信.html
