@@ -1344,7 +1344,21 @@
         
         // 初始化
         // 错误边界：关键初始化函数，崩溃不影响页面主体
-        function safeInit() {
+        
+        // DOM缓存
+        const $ = id => document.getElementById(id);
+        const DOM = {currentTime:null,birthdayReminder:null,years:null,months:null,days:null,hours:null,minutes:null,seconds:null,sealOverlay:null,lightbox:null,lightboxImg:null,lightboxCaption:null,lightboxCounter:null,shareOverlay:null,shareImg:null,shareCanvas:null,qrCanvas:null,shareLinkInput:null,copyBtn:null,letter18:null,age18badge:null,bgCanvas:null,bgMusic:null,musicControl:null};
+        function cacheDOM() { for (const k in DOM) DOM[k] = $(k); }
+        
+        // 定时器管理
+        const timers=[];
+        function scheduleTimer(fn,d){const id=setTimeout(()=>{timers.splice(timers.indexOf(id),1);fn()},d);timers.push(id);return id}
+        function clearAllTimers(){timers.forEach(id=>clearTimeout(id));timers.length=0}
+        
+        // 魔法数字常量
+        const SHARE_W=600,SHARE_H=900,SHARE_BOX_W=72,SHARE_BOX_H=60,SHARE_GAP=8,QR_SIZE=150,ANIM_FLIP=500,ANIM_UNLOCK=1200,ANIM_CONFETTI=30,TIP_DUR=3000,BTN_RESET=2000;
+
+function safeInit() {
             try { cacheDOM(); } catch(e) { console.error('DOM缓存失败:', e); }
             try { updateCurrentTime(); } catch(e) { console.error('时间初始化失败:', e); }
             try { updateCountdown(); } catch(e) { console.error('倒计时初始化失败:', e); }
